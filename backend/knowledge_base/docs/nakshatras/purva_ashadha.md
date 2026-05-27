@@ -1,0 +1,3 @@
+# Purva Ashadha Nakshatra (13°20'–26°40' Sagittarius)
+Lord: Venus. Symbol: Elephant's tusk, fan, or winnowing basket. Deity: Apas (goddess of water and purification). Gana: Manushya. Nadi: Madhya. Varna: Brahmin. Yoni: Male Monkey.
+Quality: Invincible, purifying, confident. Venus in Sagittarius creates a confident, philosophically artistic, and victory-seeking energy. Moon here creates an optimistic, fearless, and philosophically inspiring nature. Keywords: Venus, invincibility, Apas, purification, water, Sagittarius, victory, confidence.

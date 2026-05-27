@@ -1,0 +1,3 @@
+# Hasta Nakshatra (10°–23°20' Virgo)
+Lord: Moon. Symbol: Open hand or fist. Deity: Savitar (the sun of inspiration and manifestation). Gana: Deva. Nadi: Adi. Varna: Vaishya. Yoni: Female Buffalo.
+Quality: Skilled, dexterous, healing. Moon in Virgo creates an analytical, service-oriented, and craftsperson energy. Moon in Hasta gives exceptional manual skill, healing ability, and a sharp, practical mind. Favorable for: medicine, crafts, trading, healing arts. Keywords: Moon, hands, skill, Savitar, Virgo, healing, craftsmanship, manifestation.

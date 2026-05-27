@@ -1,0 +1,3 @@
+# Anuradha Nakshatra (3°20'–16°40' Scorpio)
+Lord: Saturn. Symbol: Lotus flower or row of offerings. Deity: Mitra (god of friendship, compassion, and contracts). Gana: Deva. Nadi: Madhya. Varna: Shudra. Yoni: Female Deer (Hare).
+Quality: Devoted, structured-emotional, fraternal. Saturn in Scorpio creates a disciplined, deeply loyal, and emotionally strong energy. Moon here produces devotion to friends, deep emotional loyalty, and spiritual discipline. Keywords: Saturn, devotion, friendship, Mitra, Scorpio, lotus, compassion, discipline.

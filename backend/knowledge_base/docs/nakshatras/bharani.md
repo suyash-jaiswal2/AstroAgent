@@ -1,0 +1,3 @@
+# Bharani Nakshatra (13°20'–26°40' Aries)
+Lord: Venus. Symbol: Yoni (female reproductive organ). Deity: Yama (god of death and dharma). Gana: Manushya. Nadi: Madhya. Varna: Mleccha (outcaste). Yoni: Male Elephant.
+Quality: Fierce, creative, transformative. Venus ruling Aries creates a powerful combination of beauty and intensity. Moon here indicates a passionate, creative, and intensely feeling nature. Favorable for: creative work, sexuality, confronting mortality. Keywords: Venus, transformation, creativity, boundaries, death and rebirth, yoni, Yama.

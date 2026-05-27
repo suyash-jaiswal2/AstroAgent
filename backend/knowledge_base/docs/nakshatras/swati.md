@@ -1,0 +1,3 @@
+# Swati Nakshatra (6°40'–20° Libra)
+Lord: Rahu. Symbol: Young sprout swaying in the wind, or sword. Deity: Vayu (wind god). Gana: Deva. Nadi: Adi. Varna: Butcher. Yoni: Male Buffalo.
+Quality: Independent, flexible, diplomatic. Rahu in Libra creates a unique, socially adept, and freedom-loving energy. Moon here produces a flexible, independent, charming, and commercially clever nature. Favorable for: trade, diplomacy, learning, movement. Keywords: Rahu, wind, independence, flexibility, Vayu, Libra, trade, diplomacy.

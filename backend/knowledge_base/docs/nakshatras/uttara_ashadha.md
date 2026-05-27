@@ -1,0 +1,3 @@
+# Uttara Ashadha Nakshatra (26°40' Sagittarius–10° Capricorn)
+Lord: Sun. Symbol: Elephant's tusk or small bed. Deity: Vishvedevas (universal gods). Gana: Manushya. Nadi: Adi. Varna: Kshatriya. Yoni: Male Mongoose (Nakula).
+Quality: Final victory, righteous, broad-reaching. Sun in Sagittarius-Capricorn creates a goal-oriented, universally responsible, and righteous energy. Moon here produces a person of principle, broad ambitions, and lasting achievement. Keywords: Sun, final victory, Vishvedevas, righteousness, Sagittarius-Capricorn, universal.

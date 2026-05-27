@@ -1,0 +1,3 @@
+# Krittika Nakshatra (26°40' Aries–10° Taurus)
+Lord: Sun. Symbol: Razor or flame. Deity: Agni (fire god). Gana: Rakshasa. Nadi: Antya. Varna: Brahmin. Yoni: Female Sheep.
+Quality: Sharp, purifying, warrior-like. The Sun ruling this nakshatra gives it fierce, discriminating, purifying energy. Moon here creates a proud, straightforward, sometimes sharp personality. Favorable for: cooking, fire ceremonies, cutting away the unnecessary, leadership through courage. Keywords: Sun, fire, purification, sharp, Agni, discrimination, warrior.

@@ -1,0 +1,22 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.env
+backend/astroagent.db
+
+# ChromaDB (rebuilt on deploy)
+backend/knowledge_base/chroma_store/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+
+# Eval results (keep log, not raw results)
+eval/results/*.json
+
+# OS
+.DS_Store
+Thumbs.db

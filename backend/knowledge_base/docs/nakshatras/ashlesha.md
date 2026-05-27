@@ -1,0 +1,3 @@
+# Ashlesha Nakshatra (16°40'–30° Cancer)
+Lord: Mercury. Symbol: Coiled serpent. Deity: Nagas (serpent deities of wisdom and kundalini). Gana: Rakshasa. Nadi: Antya. Varna: Mleccha. Yoni: Male Cat.
+Quality: Penetrating, hypnotic, complex. Mercury in Cancer creates a psychologically acute, sometimes manipulative, deeply intuitive energy. Moon here gives a penetrating mind, hypnotic personality, and profound instinctual wisdom. Great for: psychology, healing, research. Keywords: Mercury, serpent, kundalini, intuition, Nagas, penetrating, psychological depth.

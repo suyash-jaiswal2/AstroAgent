@@ -1,0 +1,3 @@
+# Chitra Nakshatra (23°20' Virgo–6°40' Libra)
+Lord: Mars. Symbol: Bright jewel or pearl. Deity: Vishwakarma (divine architect). Gana: Rakshasa. Nadi: Madhya. Varna: Farmer/Shudra. Yoni: Female Tiger.
+Quality: Brilliant, artistic, architectural. Mars in Virgo-Libra creates a strikingly artistic, technically gifted, and architecturally oriented energy. Moon here creates a person of unusual beauty, artistic talent, and technical-creative skill. Excellent for: arts, architecture, design, jewelry. Keywords: Mars, jewel, Vishwakarma, architecture, brilliance, beauty, design, Virgo-Libra cusp.

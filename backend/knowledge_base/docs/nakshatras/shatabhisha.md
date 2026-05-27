@@ -1,0 +1,3 @@
+# Shatabhisha Nakshatra (6°40'–20° Aquarius)
+Lord: Rahu. Symbol: Empty circle or 100 physicians. Deity: Varuna (god of cosmic waters and law). Gana: Rakshasa. Nadi: Adi. Varna: Butcher. Yoni: Female Horse.
+Quality: Healing through mystery, reclusive, scientific. Rahu in Aquarius creates a scientifically oriented, reclusive, healing-through-hidden-means energy. Moon here produces a solitary, scientifically curious, unconventional healer or researcher. Keywords: Rahu, 100 healers, Varuna, mystery, Aquarius, scientific healing, reclusive.

@@ -1,0 +1,3 @@
+# Punarvasu Nakshatra (20° Gemini–3°20' Cancer)
+Lord: Jupiter. Symbol: Bow and quiver or house. Deity: Aditi (mother of the gods, goddess of infinity). Gana: Deva. Nadi: Adi. Varna: Vaishya. Yoni: Female Cat.
+Quality: Restoring, philosophical, renewing. Jupiter in Gemini-Cancer brings a philosophical, benevolent, and renewal-oriented quality. Moon here creates a generous, philosophical, and spiritually inclined nature with a love of learning. Favorable for: healing, travel, philosophy, spiritual study. Keywords: Jupiter, renewal, Aditi, infinite, restoration, philosophy, home-returning.

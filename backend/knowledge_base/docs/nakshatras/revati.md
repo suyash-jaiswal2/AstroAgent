@@ -1,0 +1,3 @@
+# Revati Nakshatra (16°40'–30° Pisces)
+Lord: Mercury. Symbol: Fish or a drum. Deity: Pushan (nourisher, protector of travelers). Gana: Deva. Nadi: Antya. Varna: Shudra. Yoni: Female Elephant.
+Quality: Nourishing, completion, transcendent. Mercury in Pisces (debilitated sign) creates a gentle, spiritually nuanced, and nourishing completion energy. The last nakshatra of the zodiac. Moon here produces a deeply compassionate, artistic, spiritual, and wandering nature. Favorable for journeys, spiritual work, completion. Keywords: Mercury, Pushan, journeys, completion, Pisces, nourishment, last nakshatra, transcendence.

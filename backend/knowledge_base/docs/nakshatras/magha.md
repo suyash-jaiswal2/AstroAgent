@@ -1,0 +1,3 @@
+# Magha Nakshatra (0°–13°20' Leo)
+Lord: Ketu. Symbol: Throne room or royal palanquin. Deity: Pitru (ancestors, forebears). Gana: Rakshasa. Nadi: Adi. Varna: Shudra. Yoni: Male Rat.
+Quality: Regal, ancestral, powerful. Ketu in Leo creates a unique combination: worldly royal power combined with spiritual detachment. Moon here indicates strong ancestral connection, pride, leadership capacity, and a noble character. Favorable for: honoring ancestors, leadership, royal duties. Keywords: Ketu, ancestors, royalty, Pitru, Leo, throne, pride, past life legacy.

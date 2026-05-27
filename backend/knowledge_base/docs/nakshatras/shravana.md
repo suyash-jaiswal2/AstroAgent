@@ -1,0 +1,3 @@
+# Shravana Nakshatra (10°–23°20' Capricorn)
+Lord: Moon. Symbol: Ear, trident, or three footprints. Deity: Vishnu (preserver of the universe). Gana: Deva. Nadi: Madhya. Varna: Mleccha. Yoni: Male Monkey.
+Quality: Listening, learning, connecting. Moon in Capricorn (debilitation, yet the nakshatra brings grace) creates an unusual combination of structure and receptivity. Moon here produces an excellent listener, knowledgeable advisor, and connector of people. Keywords: Moon, listening, Vishnu, preservation, Capricorn, knowledge, connection, learning.

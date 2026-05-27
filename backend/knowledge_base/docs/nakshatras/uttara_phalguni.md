@@ -1,0 +1,3 @@
+# Uttara Phalguni Nakshatra (26°40' Leo–10° Virgo)
+Lord: Sun. Symbol: Back legs of a bed (support) or fig tree. Deity: Aryaman (god of patronage, friendship, and contracts). Gana: Manushya. Nadi: Adi. Varna: Kshatriya. Yoni: Male Cow (Bull).
+Quality: Reliable, patronly, service-oriented. Sun in Leo-Virgo creates a natural leader who gives support and patronage to others. Moon here creates a dignified, service-oriented, and loyal personality. Excellent for: marriage, contracts, patronage, steady service. Keywords: Sun, patronage, Aryaman, contracts, service, reliability, Leo-Virgo, support.

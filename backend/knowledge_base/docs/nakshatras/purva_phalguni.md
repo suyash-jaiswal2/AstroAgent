@@ -1,0 +1,3 @@
+# Purva Phalguni Nakshatra (13°20'–26°40' Leo)
+Lord: Venus. Symbol: Swing or front legs of a bed (rest and pleasure). Deity: Bhaga (god of fortune and marital love). Gana: Manushya. Nadi: Madhya. Varna: Brahmin. Yoni: Female Rat.
+Quality: Playful, indulgent, creative. Venus in Leo creates a joyful, creative, performative, and pleasure-loving energy. Moon here indicates a charismatic, generous, artistic, and romantically expressive nature. Favorable for: arts, romance, celebration, relaxation, creativity. Keywords: Venus, pleasure, creativity, Bhaga, fortune, romance, Leo, rest, generativity.

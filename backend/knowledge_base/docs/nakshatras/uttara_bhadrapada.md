@@ -1,0 +1,3 @@
+# Uttara Bhadrapada Nakshatra (3°20'–16°40' Pisces)
+Lord: Saturn. Symbol: Twins (back legs of funeral cot) or serpent. Deity: Ahir Budhnya (serpent of the deep, kundalini). Gana: Manushya. Nadi: Madhya. Varna: Kshatriya. Yoni: Female Cow.
+Quality: Stable wisdom, deeply spiritual, rain-bringing. Saturn in Pisces creates a profound combination of discipline and spiritual depth. Moon here produces a wise, patient, deeply compassionate, and spiritually advanced nature with great inner depth. Keywords: Saturn, Ahir Budhnya, deep wisdom, Pisces, serpent power, compassion, depth.

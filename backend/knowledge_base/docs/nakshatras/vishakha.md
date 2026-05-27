@@ -1,0 +1,3 @@
+# Vishakha Nakshatra (20° Libra–3°20' Scorpio)
+Lord: Jupiter. Symbol: Triumphal arch or potter's wheel. Deity: Indra and Agni (king of gods and fire). Gana: Rakshasa. Nadi: Madhya. Varna: Mleccha. Yoni: Male Tiger.
+Quality: Goal-oriented, intensely purposeful, patient. Jupiter spanning Libra-Scorpio creates a determined, purpose-driven, and achievement-hungry energy. Moon here produces intense goal focus, sometimes jealousy, but remarkable persistence. Keywords: Jupiter, goal-oriented, Indra, Agni, determination, Libra-Scorpio, triumph.

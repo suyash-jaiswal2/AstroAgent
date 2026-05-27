@@ -1,0 +1,3 @@
+# Ashwini Nakshatra (0°–13°20' Aries)
+Lord: Ketu. Symbol: Horse's head. Deity: Ashwini Kumaras (twin divine physicians). Gana: Deva. Nadi: Adi. Varna: Vaishya. Yoni: Male Horse.
+Quality: Swift, healing, initiating. Moon here creates a fast, energetic, healing-oriented mind with a pioneering spirit. Favorable for: healing, new beginnings, travel, medicine, speed. Keywords: speed, healing, initiation, divine medicine, pioneering, Ketu, twin energy.

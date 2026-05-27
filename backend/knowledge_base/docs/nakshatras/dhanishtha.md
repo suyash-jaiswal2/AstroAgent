@@ -1,0 +1,3 @@
+# Dhanishtha Nakshatra (23°20' Capricorn–6°40' Aquarius)
+Lord: Mars. Symbol: Drum (mridanga). Deity: Ashta Vasus (8 elemental gods). Gana: Rakshasa. Nadi: Madhya. Varna: Farmer. Yoni: Female Lion.
+Quality: Wealthy, rhythmic, musical, ambitious. Mars in Capricorn-Aquarius creates a rhythmically driven, wealth-focused, and socially bold energy. Moon here produces financial ambition, musical talent, and a strong social drive. Keywords: Mars, drum, Vasus, wealth, music, rhythm, Capricorn-Aquarius, ambition.

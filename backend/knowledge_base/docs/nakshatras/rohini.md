@@ -1,0 +1,3 @@
+# Rohini Nakshatra (10°–23°20' Taurus)
+Lord: Moon. Symbol: Chariot or growing plant. Deity: Brahma (the creator). Gana: Manushya. Nadi: Madhya. Varna: Shudra. Yoni: Male Serpent.
+Quality: Fertile, creative, sensual, artistic. The most favored nakshatra — the Moon's own asterism. Moon in Rohini is extremely auspicious: a beautiful, creative, magnetic, and charming nature. Excellent for: arts, creativity, business, new beginnings, planting. Keywords: Moon, fertility, beauty, creativity, Brahma, Taurus, abundance, most auspicious.

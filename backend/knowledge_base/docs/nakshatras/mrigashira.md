@@ -1,0 +1,3 @@
+# Mrigashira Nakshatra (23°20' Taurus–6°40' Gemini)
+Lord: Mars. Symbol: Deer's head. Deity: Soma (Moon god, nectar of immortality). Gana: Deva. Nadi: Madhya. Varna: Farmer/Shudra. Yoni: Female Serpent.
+Quality: Searching, gentle, curious. Mars energy expressed through the gentle deer creates a curious, searching, somewhat restless nature. Moon here is gentle, artistic, and constantly seeking. Favorable for: travel, research, seeking knowledge, gentle pursuits. Keywords: searching, curiosity, Mars, deer, Soma, gentle, Taurus-Gemini cusp.

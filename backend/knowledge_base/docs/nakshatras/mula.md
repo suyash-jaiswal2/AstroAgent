@@ -1,0 +1,3 @@
+# Mula Nakshatra (0°–13°20' Sagittarius)
+Lord: Ketu. Symbol: Tied bunch of roots or elephant goad. Deity: Nirriti (goddess of destruction and dissolution). Gana: Rakshasa. Nadi: Adi. Varna: Mleccha. Yoni: Male Dog.
+Quality: Root-seeking, destructive-to-rebuild, philosophical. Ketu in Sagittarius creates a paradoxical nakshatra — deeply philosophical yet associated with dissolution. Moon here often brings challenging early life but profound wisdom gained through loss and searching. Keywords: Ketu, roots, Nirriti, dissolution, philosophical depth, searching, Sagittarius.

@@ -1,0 +1,3 @@
+# Ardra Nakshatra (6°40'–20° Gemini)
+Lord: Rahu. Symbol: Teardrop or diamond. Deity: Rudra (god of storms and transformation). Gana: Manushya. Nadi: Adi. Varna: Butcher/Mleccha. Yoni: Female Dog.
+Quality: Intense, transformative, intellectually fierce. Rahu in Gemini creates a mentally turbulent but highly intelligent energy. Moon here can indicate emotional storms that ultimately produce clarity and transformation. Favorable for: research, technology, cutting through confusion. Keywords: Rahu, storm, transformation, intensity, Rudra, tears and clarity, intellectual depth.

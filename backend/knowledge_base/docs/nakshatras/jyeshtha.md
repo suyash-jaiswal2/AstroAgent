@@ -1,0 +1,3 @@
+# Jyeshtha Nakshatra (16°40'–30° Scorpio)
+Lord: Mercury. Symbol: Circular amulet, umbrella, or earring. Deity: Indra (chief of gods). Gana: Rakshasa. Nadi: Adi. Varna: Farmer. Yoni: Male Deer (Hare).
+Quality: Chief, protective, intense. Mercury in Scorpio creates a deeply investigative, protective, and chief-like energy. Moon here creates someone who feels a burden of leadership — the eldest sibling energy of protecting others. Keywords: Mercury, chief, Indra, protection, Scorpio, eldest, responsibility, intensity.

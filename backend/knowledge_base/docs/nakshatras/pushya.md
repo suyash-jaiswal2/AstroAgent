@@ -1,0 +1,3 @@
+# Pushya Nakshatra (3°20'–16°40' Cancer)
+Lord: Saturn. Symbol: Cow's udder, lotus, or wheel. Deity: Brihaspati (Jupiter, guru of the gods). Gana: Deva. Nadi: Madhya. Varna: Kshatriya. Yoni: Male Sheep (Ram).
+Quality: Nurturing, disciplined, auspicious. Considered one of the most auspicious nakshatras. Saturn in Cancer gives an unusual combination of structure and nurturing. Moon here creates a profoundly caring, disciplined, and community-serving nature. Most favorable nakshatra for starting important endeavors. Keywords: Saturn, most auspicious, nurturing, Brihaspati, Cancer, community service, discipline.

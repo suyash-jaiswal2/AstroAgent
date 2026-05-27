@@ -1,0 +1,3 @@
+# Purva Bhadrapada Nakshatra (20° Aquarius–3°20' Pisces)
+Lord: Jupiter. Symbol: Swords or front legs of a funeral cot. Deity: Aja Ekapad (one-footed goat, form of Rudra). Gana: Manushya. Nadi: Adi. Varna: Brahmin. Yoni: Male Lion.
+Quality: Fiery wisdom, two-faced, spiritually intense. Jupiter spanning Aquarius-Pisces creates an intensely spiritual, sometimes fanatical, but profoundly wisdom-seeking energy. Moon here can indicate unusual intensity and a bridge between worlds. Keywords: Jupiter, two natures, Aja Ekapad, spiritual fire, intensity, Aquarius-Pisces.
