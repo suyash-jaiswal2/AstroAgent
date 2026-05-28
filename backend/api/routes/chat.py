@@ -65,6 +65,8 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
         tool_calls_made: list[str] = []
         final_intent = "free_form"
         step_count = 0
+        final_natal_chart = None
+        final_muhurta_result = None
 
         try:
             async for chunk in GRAPH.astream(
@@ -76,6 +78,24 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                 if not messages:
                     continue
 
+                if chunk.get("natal_chart"):
+                    final_natal_chart = chunk["natal_chart"]
+
+                # Extract natal chart and muhurta result from any ToolMessages in state
+                from langchain_core.messages import AIMessage as _AIMessage, ToolMessage as _ToolMessage
+                for msg in messages:
+                    if isinstance(msg, _ToolMessage):
+                        if msg.name == "compute_birth_chart":
+                            try:
+                                final_natal_chart = json.loads(msg.content)
+                            except Exception:
+                                pass
+                        elif msg.name == "find_muhurta":
+                            try:
+                                final_muhurta_result = json.loads(msg.content)
+                            except Exception:
+                                pass
+
                 last_msg = messages[-1]
 
                 # Check for intent update
@@ -85,7 +105,6 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                     step_count = chunk["step_count"]
 
                 # Yield tool start events
-                from langchain_core.messages import AIMessage as _AIMessage, ToolMessage as _ToolMessage
                 if isinstance(last_msg, _AIMessage) and last_msg.tool_calls:
                     for tc in last_msg.tool_calls:
                         tool_name = tc.get("name", "unknown_tool")
@@ -142,6 +161,8 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                 "latency_ms": round((time.time() - initial_state["_latency_start"]) * 1000),
                 "step_count": step_count,
                 "intent": final_intent,
+                "natal_chart": final_natal_chart,
+                "muhurta_result": final_muhurta_result,
             }),
         }
 

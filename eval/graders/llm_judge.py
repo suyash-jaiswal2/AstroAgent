@@ -7,11 +7,12 @@ import json
 import os
 import re
 import asyncio
+from pathlib import Path
 
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parent.parent.parent / "backend" / ".env")
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY", ""))
 _gemini = genai.GenerativeModel("gemini-2.0-flash")

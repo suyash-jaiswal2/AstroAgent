@@ -58,7 +58,7 @@ async def run_single_case(case: dict, client: httpx.AsyncClient) -> dict:
         ) as response:
             buffer = ""
             async for chunk in response.aiter_bytes():
-                buffer += chunk.decode("utf-8", errors="replace")
+                buffer += chunk.decode("utf-8", errors="replace").replace("\r\n", "\n")
                 while "\n\n" in buffer:
                     raw_event, buffer = buffer.split("\n\n", 1)
                     lines = raw_event.strip().splitlines()
@@ -143,11 +143,14 @@ def print_scorecard(results: list[dict]) -> None:
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--category", default=None)
+    parser.add_argument("--case", default=None, help="Run a specific case ID (e.g. TC001)")
     parser.add_argument("--output", default=None)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
     cases = load_cases(args.category)
+    if args.case:
+        cases = [c for c in cases if c.get("id") == args.case]
     print(f"Loaded {len(cases)} test cases.")
 
     if args.dry_run:
@@ -168,6 +171,8 @@ async def main():
 
         results = []
         for i, case in enumerate(cases):
+            if i > 0:
+                await asyncio.sleep(2.0)
             print(f"  Running {case['id']} ({i+1}/{len(cases)})...", end=" ", flush=True)
             result = await run_single_case(case, client)
             status = "✓ PASS" if result["passed"] else "✗ FAIL"

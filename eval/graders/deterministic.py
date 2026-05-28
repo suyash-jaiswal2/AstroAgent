@@ -30,7 +30,7 @@ def run_deterministic_checks(
 
     # ── Sun sign check ─────────────────────────────────────────────────────────
     if "sun_sign" in expected:
-        natal = meta.get("natal_chart", {})
+        natal = meta.get("natal_chart") or {}
         actual_sun = (
             natal.get("tropical", {})
             .get("planets", {})
@@ -41,7 +41,7 @@ def run_deterministic_checks(
 
     # ── Ascendant sign check ───────────────────────────────────────────────────
     if "ascendant_sign" in expected:
-        natal = meta.get("natal_chart", {})
+        natal = meta.get("natal_chart") or {}
         actual_asc = (
             natal.get("tropical", {})
             .get("ascendant", {})

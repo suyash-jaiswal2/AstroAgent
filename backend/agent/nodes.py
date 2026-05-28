@@ -4,7 +4,15 @@ import re
 import time
 from datetime import datetime
 
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Force load .env from the backend/ directory to ensure keys are populated
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
 from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 
 from .state import AstroAgentState
@@ -12,13 +20,43 @@ from .tools import ALL_TOOLS
 
 from langchain_core.messages import ToolMessage
 
-# ── Model setup ───────────────────────────────────────────────────────────────
+# ── Model setup (Anthropic primary → Gemini secondary → Groq tertiary) ───────
 
-_llm = ChatAnthropic(
-    model="claude-haiku-4-5",
-    api_key=os.getenv("ANTHROPIC_API_KEY"),
-    max_tokens=2048,
-)
+_MODELS = []
+
+if os.getenv("ANTHROPIC_API_KEY"):
+    _MODELS.append(ChatAnthropic(
+        model="claude-haiku-4-5",
+        api_key=os.getenv("ANTHROPIC_API_KEY"),
+        max_tokens=2048,
+    ))
+
+if os.getenv("GOOGLE_API_KEY"):
+    _MODELS.append(ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        google_api_key=os.getenv("GOOGLE_API_KEY"),
+        max_tokens=2048,
+        temperature=0.3,
+    ))
+
+if os.getenv("GROQ_API_KEY"):
+    _MODELS.append(ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key=os.getenv("GROQ_API_KEY"),
+        max_tokens=2048,
+        temperature=0.3,
+    ))
+
+if not _MODELS:
+    raise RuntimeError(
+        "No LLM API key configured. Set ANTHROPIC_API_KEY, GOOGLE_API_KEY, or GROQ_API_KEY in .env"
+    )
+
+
+def _get_llm(tools=None):
+    """Return an LLM (with optional tool binding) and a fallback chain."""
+    bound = [m.bind_tools(tools) if tools else m for m in _MODELS]
+    return bound[0].with_fallbacks(bound[1:], exceptions_to_handle=(Exception,)) if len(bound) > 1 else bound[0]
 
 # ── Prompt injection blocklist ────────────────────────────────────────────────
 
@@ -114,7 +152,7 @@ Rules:
 Output ONLY valid JSON: {"intent": "<label>", "confidence": 0.0}"""
 
     try:
-        response = _llm.invoke([
+        response = _get_llm().invoke([
             SystemMessage(content=router_prompt),
             HumanMessage(content=last_user_msg),
         ])
@@ -190,7 +228,7 @@ Current natal chart: {chart_summary}
 Natal chart JSON (for tool calls): {natal_chart_json_for_prompt}
 Current step: {step_count}/{state.get('max_steps', 8)}"""
 
-    model_with_tools = _llm.bind_tools(ALL_TOOLS) if ALL_TOOLS else _llm
+    model_with_tools = _get_llm(tools=ALL_TOOLS)
 
     response = model_with_tools.invoke(
         [SystemMessage(content=system_prompt)] + state.get("messages", [])
