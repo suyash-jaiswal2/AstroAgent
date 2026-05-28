@@ -23,6 +23,14 @@ SIGNS = [
     "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
 ]
 
+NAKSHATRA_NAMES = [
+    "Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra","Punarvasu",
+    "Pushya","Ashlesha","Magha","Purva Phalguni","Uttara Phalguni","Hasta",
+    "Chitra","Swati","Vishakha","Anuradha","Jyeshtha","Mula","Purva Ashadha",
+    "Uttara Ashadha","Shravana","Dhanishtha","Shatabhisha","Purva Bhadrapada",
+    "Uttara Bhadrapada","Revati",
+]
+
 PLANET_IDS = {
     "Sun": swe.SUN, "Moon": swe.MOON, "Mercury": swe.MERCURY,
     "Venus": swe.VENUS, "Mars": swe.MARS, "Jupiter": swe.JUPITER,

@@ -64,46 +64,75 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
         full_response_tokens: list[str] = []
         tool_calls_made: list[str] = []
         final_intent = "free_form"
+        step_count = 0
 
         try:
-            async for event_chunk in GRAPH.astream(
+            async for chunk in GRAPH.astream(
                 input=initial_state,
-                stream_mode="messages",
+                stream_mode="values",  # streams full state after each node
             ):
-                # event_chunk is a tuple: (node_name, message_chunk)
-                if not isinstance(event_chunk, tuple) or len(event_chunk) < 2:
+                # Extract the latest message from state
+                messages = chunk.get("messages", [])
+                if not messages:
                     continue
 
-                node_name, message = event_chunk
+                last_msg = messages[-1]
 
-                # Streaming tokens from reasoning node
-                if node_name in ("reasoning", "response_formatter") and isinstance(message, AIMessage):
-                    if isinstance(message.content, str) and message.content:
-                        full_response_tokens.append(message.content)
-                        yield {
-                            "event": "token",
-                            "data": json.dumps({"text": message.content}),
-                        }
+                # Check for intent update
+                if chunk.get("intent"):
+                    final_intent = chunk["intent"]
+                if chunk.get("step_count"):
+                    step_count = chunk["step_count"]
 
-                # Tool start events
-                elif node_name == "tool_node":
+                # Yield tool start events
+                from langchain_core.messages import AIMessage as _AIMessage, ToolMessage as _ToolMessage
+                if isinstance(last_msg, _AIMessage) and last_msg.tool_calls:
+                    for tc in last_msg.tool_calls:
+                        tool_name = tc.get("name", "unknown_tool")
+                        if tool_name not in tool_calls_made:
+                            tool_calls_made.append(tool_name)
+                            yield {
+                                "event": "tool_start",
+                                "data": json.dumps({
+                                    "tool": tool_name,
+                                    "step": step_count,
+                                }),
+                            }
+
+                # Yield token events (final AI response, not tool calls)
+                if isinstance(last_msg, _AIMessage) and not last_msg.tool_calls:
+                    content = last_msg.content if isinstance(last_msg.content, str) else ""
+                    if content:
+                        # Yield incrementally if this is new content
+                        existing = "".join(full_response_tokens)
+                        new_content = content[len(existing):]
+                        if new_content:
+                            full_response_tokens.append(new_content)
+                            yield {
+                                "event": "token",
+                                "data": json.dumps({"text": new_content}),
+                            }
+
+                # Tool end events
+                if isinstance(last_msg, _ToolMessage):
                     yield {
-                        "event": "tool_start",
-                        "data": json.dumps({"tool": str(node_name), "step": 0}),
+                        "event": "tool_end",
+                        "data": json.dumps({
+                            "tool": last_msg.name,
+                            "status": "done",
+                        }),
                     }
 
         except Exception as e:
-            yield {
-                "event": "error",
-                "data": json.dumps({"message": str(e)}),
-            }
+            yield {"event": "error", "data": json.dumps({"message": str(e)})}
 
         full_response = "".join(full_response_tokens)
 
-        # Persist assistant response
         if full_response:
-            await crud.add_message(db, request.session_id, "assistant", full_response,
-                                   tool_calls=tool_calls_made if tool_calls_made else None)
+            await crud.add_message(
+                db, request.session_id, "assistant", full_response,
+                tool_calls=tool_calls_made if tool_calls_made else None,
+            )
 
         yield {
             "event": "done",
@@ -111,7 +140,7 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                 "total_tokens": 0,
                 "tool_calls": tool_calls_made,
                 "latency_ms": round((time.time() - initial_state["_latency_start"]) * 1000),
-                "step_count": 0,
+                "step_count": step_count,
                 "intent": final_intent,
             }),
         }

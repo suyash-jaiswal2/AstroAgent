@@ -10,6 +10,8 @@ from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 from .state import AstroAgentState
 from .tools import ALL_TOOLS
 
+from langchain_core.messages import ToolMessage
+
 # ── Model setup ───────────────────────────────────────────────────────────────
 
 _llm = ChatAnthropic(
@@ -29,9 +31,24 @@ INJECTION_PATTERNS = [
     r"act\s+as\s+if\s+you\s+have\s+no\s+restrictions",
     r"disregard\s+(your\s+)?guidelines",
     r"forget\s+your\s+(previous\s+)?instructions",
+    r"(override|bypass|disable)\s+(your\s+)?(safety|restrictions|guidelines)",
+    r"new\s+persona",
+    r"without\s+(any\s+)?restrictions",
 ]
 
 INJECTION_RE = re.compile("|".join(INJECTION_PATTERNS), re.IGNORECASE)
+
+def _extract_natal_chart_from_tool_messages(messages: list) -> dict | None:
+    """Scan messages for a completed compute_birth_chart tool result."""
+    for msg in reversed(messages):
+        if isinstance(msg, ToolMessage) and msg.name == "compute_birth_chart":
+            try:
+                data = json.loads(msg.content)
+                if "tropical" in data and "sidereal" in data and "error" not in data:
+                    return data
+            except Exception:
+                pass
+    return None
 
 
 # ── Nodes ─────────────────────────────────────────────────────────────────────
@@ -121,49 +138,77 @@ Output ONLY valid JSON: {"intent": "<label>", "confidence": 0.0}"""
 
 
 def reasoning_node(state: AstroAgentState) -> dict:
-    """Main ReAct reasoning loop using Claude Haiku with tools bound."""
+    """Main ReAct reasoning loop using Claude Haiku with all 9 tools bound."""
     step_count = state.get("step_count", 0) + 1
-
     birth_details = state.get("birth_details")
     natal_chart = state.get("natal_chart")
 
-    birth_summary = birth_details.summary() if birth_details else "No birth details on file."
-    chart_summary = natal_chart.summary() if natal_chart else "No chart computed yet."
+    # Auto-extract natal chart from tool messages if not yet cached
+    if natal_chart is None:
+        extracted = _extract_natal_chart_from_tool_messages(state.get("messages", []))
+        if extracted:
+            natal_chart = extracted
 
+    birth_summary = birth_details.summary() if birth_details and hasattr(birth_details, 'summary') else \
+                    str(birth_details) if birth_details else "No birth details on file."
+
+    if natal_chart and isinstance(natal_chart, dict):
+        sun = natal_chart.get("tropical",{}).get("planets",{}).get("Sun",{})
+        moon = natal_chart.get("tropical",{}).get("planets",{}).get("Moon",{})
+        asc = natal_chart.get("tropical",{}).get("ascendant",{})
+        chart_summary = (f"Sun {sun.get('sign','?')}, Moon {moon.get('sign','?')}, "
+                         f"Asc {asc.get('sign','?')} — chart computed ✓")
+        natal_chart_json_for_prompt = json.dumps({
+            "tropical": natal_chart.get("tropical"),
+            "sidereal": natal_chart.get("sidereal"),
+        })[:800]
+    else:
+        chart_summary = "No chart computed yet."
+        natal_chart_json_for_prompt = "null"
+
+    today = datetime.utcnow().strftime("%Y-%m-%d")
     system_prompt = f"""You are Aradhana's celestial guide — a warm, wise astrologer rooted in both Western and Vedic traditions.
 You reason step by step, call tools to get real data, and respond with compassion and clarity.
+
+Today's date: {today}
 
 Available tools: geocode_place, compute_birth_chart, get_daily_transits, knowledge_lookup,
 find_muhurta, compute_compatibility, detect_yogas, get_panchang, compute_dasha_timeline.
 
 Rules:
 1. NEVER invent planetary positions. Always call compute_birth_chart for chart data.
-2. NEVER give medical, legal, or financial certainty. Rephrase as tendencies and possibilities.
-3. If birth details are missing for a chart request, ask for them warmly and specifically.
+2. NEVER give medical, legal, or financial certainty. Rephrase as tendencies.
+3. If birth details are missing for a chart request, ask warmly for: name, date, time (optional), place.
 4. Maximum {state.get('max_steps', 8)} reasoning steps — be efficient.
-5. Always ground interpretations in tool outputs and knowledge_lookup results.
+5. Ground interpretations in tool outputs and knowledge_lookup results.
 6. Tone: warm, contemplative, poetic but clear. Never clinical. Never robotic.
-7. Address the user by name if known.
+7. After compute_birth_chart, ALWAYS call knowledge_lookup to ground your interpretation.
+8. For transit questions, pass natal_chart_json to get_daily_transits for personalized aspects.
 
-Current birth details on file: {birth_summary}
-Natal chart on file: {chart_summary}
+Current birth details: {birth_summary}
+Current natal chart: {chart_summary}
+Natal chart JSON (for tool calls): {natal_chart_json_for_prompt}
 Current step: {step_count}/{state.get('max_steps', 8)}"""
 
-    # Bind tools (empty list initially; populated as tools are implemented)
     model_with_tools = _llm.bind_tools(ALL_TOOLS) if ALL_TOOLS else _llm
 
     response = model_with_tools.invoke(
         [SystemMessage(content=system_prompt)] + state.get("messages", [])
     )
 
-    return {
+    updates: dict = {
         "messages": [response],
         "step_count": step_count,
     }
 
+    # Cache natal chart in state if freshly extracted
+    if natal_chart and state.get("natal_chart") is None:
+        updates["natal_chart"] = natal_chart
+
+    return updates
+
 
 def response_formatter_node(state: AstroAgentState) -> dict:
-    """Post-process final response before streaming to client."""
     messages = state.get("messages", [])
     if not messages:
         return {}
@@ -172,25 +217,21 @@ def response_formatter_node(state: AstroAgentState) -> dict:
     if not isinstance(last_msg, AIMessage):
         return {}
 
-    content = last_msg.content if isinstance(last_msg.content, str) else ""
-
-    # Append safety disclaimer for sensitive intents
+    content = last_msg.content if isinstance(last_msg.content, str) else str(last_msg.content)
     intent = state.get("intent", "free_form")
-    sensitive_intents = {"chart_request", "daily_horoscope", "free_form",
-                         "yoga_query", "dasha_query", "compatibility_request"}
+
+    sensitive_intents = {"chart_request","daily_horoscope","free_form","yoga_query",
+                         "dasha_query","compatibility_request","muhurta_request"}
     disclaimer = (
         "\n\n---\n*Aradhana is a spiritual companion for reflection and self-discovery. "
         "Astrological readings are not a substitute for professional medical, legal, or financial advice.*"
     )
 
-    # Always append disclaimer to sensitive intents that might touch personal life
-    if intent in sensitive_intents and disclaimer.strip() not in content:
-        content = content + disclaimer
+    if intent in sensitive_intents and "spiritual companion" not in content:
+        content += disclaimer
 
     updated_msg = AIMessage(content=content)
-    # Replace last message with formatted version
-    new_messages = list(messages[:-1]) + [updated_msg]
-    return {"messages": new_messages}
+    return {"messages": list(messages[:-1]) + [updated_msg]}
 
 
 def format_error_node(state: AstroAgentState) -> dict:

@@ -76,6 +76,11 @@ async def save_birth_details(
 
     if birth_date > date_type.today():
         raise HTTPException(status_code=422, detail="Birth date cannot be in the future.")
+    if birth_date.year < 1800 or birth_date.year > 2020:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Birth year {birth_date.year} is outside the expected range (1800–2020)."
+        )
 
     birth_dict = body.model_dump()
     session = await crud.update_session_birth_details(db, session_id, birth_dict)

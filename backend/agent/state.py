@@ -66,7 +66,7 @@ class AstroAgentState(TypedDict):
 
     # User profile
     birth_details: BirthDetails | None
-    natal_chart: NatalChart | None     # Cached after first compute
+    natal_chart: dict | None     # Cached after first compute
 
     # Routing
     intent: Literal[
