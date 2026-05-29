@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 from graders.deterministic import run_deterministic_checks
 from graders.llm_judge import run_llm_judge
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://127.0.0.1:8000"
 VERSION = "1.0.0"
 
 
@@ -146,6 +146,8 @@ async def main():
     parser.add_argument("--case", default=None, help="Run a specific case ID (e.g. TC001)")
     parser.add_argument("--output", default=None)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--concurrency", type=int, default=1, help="Concurrent cases to run")
+    parser.add_argument("--delay", type=float, default=20.0, help="Delay in seconds between starting cases to prevent rate limits")
     args = parser.parse_args()
 
     cases = load_cases(args.category)
@@ -169,13 +171,15 @@ async def main():
             print("ERROR: Backend not running. Start it with: uvicorn api.main:app --reload --port 8000")
             sys.exit(1)
 
-        print(f"Starting execution of {len(cases)} cases with concurrency limit = 3...")
+        print(f"Starting execution of {len(cases)} cases with concurrency limit = {args.concurrency} and delay = {args.delay}s...")
         
-        sem = asyncio.Semaphore(3)
+        sem = asyncio.Semaphore(args.concurrency)
         completed_count = 0
 
-        async def run_with_sem(case):
+        async def run_with_sem(case, delay_before: float):
             nonlocal completed_count
+            if delay_before > 0:
+                await asyncio.sleep(delay_before)
             async with sem:
                 result = await run_single_case(case, client)
                 completed_count += 1
@@ -183,8 +187,16 @@ async def main():
                 print(f"[{completed_count}/{len(cases)}] Case {case['id']} - {status} ({result['latency_ms']}ms)")
                 return result
 
-        tasks = [run_with_sem(c) for c in cases]
-        results = await asyncio.gather(*tasks)
+        tasks = [run_with_sem(c, i * args.delay if args.concurrency > 1 else 0) for i, c in enumerate(cases)]
+        
+        if args.concurrency == 1:
+            results = []
+            for t in tasks:
+                results.append(await t)
+                if args.delay > 0 and len(results) < len(cases):
+                    await asyncio.sleep(args.delay)
+        else:
+            results = await asyncio.gather(*tasks)
 
     print_scorecard(results)
 

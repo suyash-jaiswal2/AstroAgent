@@ -1,5 +1,5 @@
 """
-LLM-as-judge using Google Gemini Flash (free tier: 1M tokens/day).
+LLM-as-judge using Groq (Llama 3.3 70B).
 Scores responses on 4 dimensions: tone_warmth, astrological_accuracy,
 helpfulness, conciseness.
 """
@@ -9,13 +9,30 @@ import re
 import asyncio
 from pathlib import Path
 
-import google.generativeai as genai
+from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent.parent / "backend" / ".env")
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY", ""))
-_gemini = genai.GenerativeModel("gemini-2.0-flash")
+_gemini_judge = None
+if os.getenv("GEMINI_API_KEY"):
+    _gemini_judge = ChatGoogleGenerativeAI(
+        model="gemini-flash-latest",
+        api_key=os.getenv("GEMINI_API_KEY"),
+        temperature=0.1,
+        max_tokens=512,
+    )
+
+_groq_judge = None
+if os.getenv("GROQ_API_KEY"):
+    _groq_judge = ChatGroq(
+        model="llama-3.1-8b-instant",
+        api_key=os.getenv("GROQ_API_KEY"),
+        temperature=0.1,
+        max_tokens=512,
+    )
 
 JUDGE_RUBRIC = """You are evaluating an AI astrology assistant response on multiple dimensions. Score each requested dimension on a 1–5 scale.
 
@@ -41,7 +58,7 @@ Output EXACTLY this JSON format and nothing else. Do not add any extra text or m
 
 
 async def run_llm_judge(case: dict, response: str) -> dict:
-    """Score a response on all specified llm_judge dimensions in a single Gemini Flash call."""
+    """Score a response on all specified llm_judge dimensions."""
     dimensions: list[str] = case.get("grading", {}).get("llm_judge", [])
     if not dimensions:
         return {"scores": {}, "avg_score": 0.0}
@@ -55,8 +72,12 @@ async def run_llm_judge(case: dict, response: str) -> dict:
 
     scores: dict = {}
     try:
-        result = _gemini.generate_content(prompt)
-        raw = result.text.strip()
+        judge = _gemini_judge or _groq_judge
+        if not judge:
+            raise RuntimeError("No LLM API key configured for Judge.")
+            
+        result = await judge.ainvoke([HumanMessage(content=prompt)])
+        raw = result.content.strip()
         # Strip markdown fences
         raw = re.sub(r"```json|```", "", raw).strip()
         parsed = json.loads(raw)
@@ -75,4 +96,4 @@ async def run_llm_judge(case: dict, response: str) -> dict:
             scores[dim] = {"score": 3, "reason": f"Judge error: {str(e)[:50]}"}
 
     avg = sum(s["score"] for s in scores.values()) / len(scores) if scores else 0.0
-    return {"scores": scores, "avg_score": round(avg, 2)}
+    return {"scores": scores, "avg_score": round(avg, 2)}

@@ -28,7 +28,7 @@ export function ChartWheel({ chart, size = 400 }: Props) {
 
     // Sign bands
     const signBandOuter = r, signBandInner = r * 0.82
-    SIGNS.forEach((sign, i) => {
+    SIGNS.forEach((_sign, i) => {
       const startAngle = (i / 12) * 2 * Math.PI - Math.PI / 2
       const endAngle = ((i + 1) / 12) * 2 * Math.PI - Math.PI / 2
       const arc = d3.arc<unknown, unknown>().innerRadius(signBandInner).outerRadius(signBandOuter)
@@ -47,8 +47,8 @@ export function ChartWheel({ chart, size = 400 }: Props) {
     })
 
     // House lines
-    const houses = (chart as Record<string, Record<string, Record<string, number>>>).tropical?.houses || {}
-    Object.values(houses).forEach((house: Record<string, number>) => {
+    const houses = (chart as Record<string, Record<string, Record<string, Record<string, number>>>>).tropical?.houses || {}
+    Object.values(houses).forEach((house) => {
       if (!house?.cusp_longitude) return
       const angle = (house.cusp_longitude / 360) * 2 * Math.PI - Math.PI / 2
       svg.append('line')
@@ -59,8 +59,8 @@ export function ChartWheel({ chart, size = 400 }: Props) {
 
     // Planets
     const planets = (chart as Record<string, Record<string, Record<string, unknown>>>).tropical?.planets || {}
-    Object.entries(planets).forEach(([name, data]: [string, Record<string, unknown>]) => {
-      const lon = data?.longitude as number
+    Object.entries(planets).forEach(([name, data]) => {
+      const lon = (data as Record<string, unknown>)?.longitude as number
       if (lon === undefined) return
       const angle = (lon / 360) * 2 * Math.PI - Math.PI / 2
       const pr = r * 0.6
@@ -77,7 +77,7 @@ export function ChartWheel({ chart, size = 400 }: Props) {
         .text(name.slice(0, 2))
 
       // Retrograde indicator
-      if (data?.retrograde) {
+      if ((data as Record<string, unknown>)?.retrograde) {
         svg.append('text').attr('x', px + size * 0.025).attr('y', py - size * 0.02)
           .attr('fill', '#CC2936').attr('font-size', size * 0.018).text('℞')
       }

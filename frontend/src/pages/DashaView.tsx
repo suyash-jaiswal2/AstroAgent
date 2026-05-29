@@ -24,11 +24,11 @@ export default function DashaView() {
       <div style={{ position: 'relative', zIndex: 10, maxWidth: 900, margin: '0 auto' }}>
         <button onClick={() => navigate('/chat')} style={{ color: 'var(--text-stardust)', background: 'none', border: 'none', cursor: 'pointer', marginBottom: '1rem', fontFamily: 'Inter, sans-serif', fontSize: '0.85rem' }}>← Back</button>
         <h1 style={{ fontFamily: 'Cinzel, serif', fontSize: '1.5rem', color: 'var(--gold)', marginBottom: '1.5rem', letterSpacing: '0.15em' }}>DASHA TIMELINE</h1>
-        {dashaData?.current_period && (
+        {Boolean(dashaData?.current_period) && (
           <GlassCard className="p-4 mb-4">
             <p style={{ fontFamily: 'Cinzel, serif', fontSize: '0.7rem', color: 'var(--gold)', letterSpacing: '0.1em', marginBottom: 4 }}>CURRENT PERIOD</p>
             <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', color: 'var(--text-celestial)' }}>
-              {(dashaData.current_period as Record<string, Record<string, string>>).mahadasha?.planet} Mahadasha · {(dashaData.current_period as Record<string, Record<string, string>>).antardasha?.planet} Antardasha
+              {String((dashaData!.current_period as Record<string, Record<string, string>>).mahadasha?.planet)} Mahadasha · {String((dashaData!.current_period as Record<string, Record<string, string>>).antardasha?.planet)} Antardasha
             </p>
           </GlassCard>
         )}

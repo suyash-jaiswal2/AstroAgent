@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+// Landing page
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ObservatoryBackground } from '../components/observatory/ObservatoryBackground'
@@ -8,7 +8,7 @@ import { useSessionStore } from '../store/sessionStore'
 import { createSession } from '../lib/api'
 
 const stagger = { hidden: { opacity: 0, y: 20 }, visible: (i: number) => ({
-  opacity: 1, y: 0, transition: { delay: i * 0.3, duration: 0.8, ease: 'easeOut' },
+  opacity: 1, y: 0, transition: { delay: i * 0.3, duration: 0.8, ease: 'easeOut' as const },
 })}
 
 export default function Landing() {

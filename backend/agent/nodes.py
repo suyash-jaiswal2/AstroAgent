@@ -10,53 +10,52 @@ from dotenv import load_dotenv
 # Force load .env from the backend/ directory to ensure keys are populated
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from langchain_anthropic import ChatAnthropic
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
-from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import AIMessage, SystemMessage, HumanMessage, ToolMessage
 
 from .state import AstroAgentState
 from .tools import ALL_TOOLS
 
-from langchain_core.messages import ToolMessage
+# ── Model setup (Gemini + Groq Fallback) ───────────────────────────────────────────────────────
 
-# ── Model setup (Anthropic primary → Gemini secondary → Groq tertiary) ───────
+if not os.getenv("GROQ_API_KEY") and not os.getenv("GEMINI_API_KEY"):
+    raise RuntimeError(
+        "No LLM API key configured. Set GEMINI_API_KEY or GROQ_API_KEY in .env"
+    )
 
-_MODELS = []
-
-if os.getenv("ANTHROPIC_API_KEY"):
-    _MODELS.append(ChatAnthropic(
-        model="claude-3-5-haiku-20241022",
-        api_key=os.getenv("ANTHROPIC_API_KEY"),
-        max_tokens=2048,
-    ))
-
-if os.getenv("GOOGLE_API_KEY"):
-    _MODELS.append(ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
-        google_api_key=os.getenv("GOOGLE_API_KEY"),
-        max_tokens=2048,
-        temperature=0.3,
-    ))
-
+_GROQ_MODEL = None
 if os.getenv("GROQ_API_KEY"):
-    _MODELS.append(ChatGroq(
-        model="llama-3.3-70b-versatile",
+    _GROQ_MODEL = ChatGroq(
+        model="llama-3.1-8b-instant",
         api_key=os.getenv("GROQ_API_KEY"),
         max_tokens=2048,
         temperature=0.3,
-    ))
-
-if not _MODELS:
-    raise RuntimeError(
-        "No LLM API key configured. Set ANTHROPIC_API_KEY, GOOGLE_API_KEY, or GROQ_API_KEY in .env"
     )
 
+_GEMINI_MODEL = None
+if os.getenv("GEMINI_API_KEY"):
+    _GEMINI_MODEL = ChatGoogleGenerativeAI(
+        model="gemini-flash-latest",
+        api_key=os.getenv("GEMINI_API_KEY"),
+        max_tokens=2048,
+        temperature=0.3,
+    )
 
 def _get_llm(tools=None):
-    """Return an LLM (with optional tool binding) and a fallback chain."""
-    bound = [m.bind_tools(tools) if tools else m for m in _MODELS]
-    return bound[0].with_fallbacks(bound[1:], exceptions_to_handle=(Exception,)) if len(bound) > 1 else bound[0]
+    """Return an LLM with optional tool binding, preferring Gemini with Groq fallback."""
+    primary = _GEMINI_MODEL
+    fallback = _GROQ_MODEL
+
+    if primary and tools:
+        primary = primary.bind_tools(tools)
+    if fallback and tools:
+        fallback = fallback.bind_tools(tools)
+
+    if primary and fallback:
+        return primary.with_fallbacks([fallback])
+    
+    return primary or fallback
 
 # ── Prompt injection blocklist ────────────────────────────────────────────────
 
@@ -206,8 +205,10 @@ def reasoning_node(state: AstroAgentState) -> dict:
         if extracted:
             natal_chart = extracted
 
-    birth_summary = birth_details.summary() if birth_details and hasattr(birth_details, 'summary') else \
-                    str(birth_details) if birth_details else "No birth details on file."
+    birth_summary = (
+        f"Name: {birth_details.name}, Date: {birth_details.date}, Time: {birth_details.time if birth_details.time else 'unknown'}, "
+        f"Place: {birth_details.place}, Coordinates: (Lat: {birth_details.latitude}, Lon: {birth_details.longitude}, Timezone: {birth_details.timezone})"
+    ) if birth_details else "No birth details on file."
 
     if natal_chart and isinstance(natal_chart, dict):
         sun = natal_chart.get("tropical",{}).get("planets",{}).get("Sun",{})
@@ -233,13 +234,13 @@ Available tools: geocode_place, compute_birth_chart, get_daily_transits, knowled
 find_muhurta, compute_compatibility, detect_yogas, get_panchang, compute_dasha_timeline.
 
 Rules:
-1. NEVER invent planetary positions. Always call compute_birth_chart for chart data.
-2. NEVER give medical, legal, or financial certainty. Rephrase as tendencies.
-3. If birth details are missing for a chart request, ask warmly for: name, date, time (optional), place.
-4. Maximum {state.get('max_steps', 8)} reasoning steps — be efficient.
-5. Ground interpretations in tool outputs and knowledge_lookup results.
-6. Tone: warm, contemplative, poetic but clear. Never clinical. Never robotic.
-7. After compute_birth_chart, ALWAYS call knowledge_lookup to ground your interpretation.
+1. You cannot interpret a chart or do knowledge lookups before the chart is computed. Therefore, you MUST ALWAYS geocode the place first using geocode_place, then compute the chart using compute_birth_chart, and only then call knowledge_lookup to interpret it. This exact sequence (geocode_place -> compute_birth_chart -> knowledge_lookup) is MANDATORY for all birth chart and career/love life requests.
+2. NEVER invent planetary positions. Always call compute_birth_chart for chart data.
+3. NEVER give medical, legal, or financial certainty. Rephrase as tendencies.
+4. If birth details are missing for a chart request, ask warmly for: name, date, time (optional), place.
+5. Maximum {state.get('max_steps', 8)} reasoning steps — be efficient.
+6. Ground interpretations in tool outputs and knowledge_lookup results.
+7. Tone: warm, contemplative, poetic but clear. Never clinical. Never robotic.
 8. For transit questions, pass natal_chart_json to get_daily_transits for personalized aspects.
 
 Current birth details: {birth_summary}

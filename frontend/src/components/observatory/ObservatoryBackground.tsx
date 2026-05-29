@@ -37,21 +37,22 @@ function StarField() {
 }
 
 function NebulaClouds() {
+  const nebulae: Array<{ w: string; h: string; color: string; delay: string; top?: string; left?: string; right?: string; bottom?: string }> = [
+    { top: '-20%', left: '-10%', w: '60%', h: '60%', color: '#0D0D2B', delay: '0s' },
+    { top: '30%', right: '-20%', w: '50%', h: '50%', color: '#12123A', delay: '7s' },
+    { bottom: '-10%', left: '20%', w: '55%', h: '45%', color: '#0a0a1f', delay: '14s' },
+  ]
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-      {[
-        { top: '-20%', left: '-10%', w: '60%', h: '60%', color: '#0D0D2B', delay: '0s' },
-        { top: '30%', right: '-20%', w: '50%', h: '50%', color: '#12123A', delay: '7s' },
-        { bottom: '-10%', left: '20%', w: '55%', h: '45%', color: '#0a0a1f', delay: '14s' },
-      ].map((n, i) => (
+      {nebulae.map((n, i) => (
         <div
           key={i}
           style={{
             position: 'absolute',
             width: n.w, height: n.h,
-            top: n.top, left: (n as Record<string, string>).left,
-            right: (n as Record<string, string>).right,
-            bottom: (n as Record<string, string>).bottom,
+            top: n.top, left: n.left,
+            right: n.right,
+            bottom: n.bottom,
             background: `radial-gradient(ellipse at center, ${n.color} 0%, transparent 70%)`,
             animation: `nebula-drift 20s ease-in-out infinite`,
             animationDelay: n.delay,

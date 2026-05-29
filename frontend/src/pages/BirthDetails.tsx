@@ -18,8 +18,8 @@ export default function BirthDetails() {
     setLoading(true)
     try {
       let sid = sessionId
-      if (!sid) { const s = await createSession(); sid = s.session_id; setSessionId(sid) }
-      await saveBirthDetails(sid!, details as Record<string, unknown>)
+      if (!sid) { const s = await createSession(); sid = s.session_id; setSessionId(sid!) }
+      await saveBirthDetails(sid!, details as unknown as Record<string, unknown>)
       setBirthDetails(details)
       navigate('/chat')
     } catch (err) {

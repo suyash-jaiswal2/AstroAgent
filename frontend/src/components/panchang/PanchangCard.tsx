@@ -46,7 +46,7 @@ export function PanchangCard() {
           </div>
         </div>
       ))}
-      {data.moon_phase && (
+      {Boolean(data.moon_phase) && (
         <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--glass-border)', fontSize: '0.82rem', color: 'var(--text-stardust)', fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic' }}>
           🌙 {String(data.moon_phase)} · {String(data.moon_illumination_pct)}% illuminated
         </div>

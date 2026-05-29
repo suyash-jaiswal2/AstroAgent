@@ -10,7 +10,7 @@ from pathlib import Path
 
 # Ensure backend/ is on the path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-os.environ.setdefault("ANTHROPIC_API_KEY", "test")
+os.environ.setdefault("GROQ_API_KEY", "test")
 
 import pytest
 

@@ -25,7 +25,7 @@ export function DashaTimeline({ timeline, width = 700 }: Props) {
     const today = new Date()
     const allStart = new Date(timeline[0].start)
     const allEnd = new Date(timeline[timeline.length - 1].end)
-    const totalDays = (allEnd.getTime() - allStart.getTime()) / 86400000
+
 
     const xScale = d3.scaleTime().domain([allStart, allEnd]).range([10, width - 10])
     const barY = 30, barH = 40

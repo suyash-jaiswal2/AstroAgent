@@ -5,7 +5,7 @@ Run: pytest backend/tests/test_features.py -v
 import json, os, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-os.environ.setdefault("ANTHROPIC_API_KEY", "test")
+os.environ.setdefault("GROQ_API_KEY", "test")
 
 import pytest
 from agent.tools.birth_chart import _compute_chart

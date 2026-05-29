@@ -28,6 +28,8 @@ export default function Chat() {
   useOrbMood()
 
   const [input, setInput] = useState('')
+  const [isListening, setIsListening] = useState(false)
+  const recognitionRef = useRef<SpeechRecognitionAlternative | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -50,8 +52,33 @@ export default function Chat() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
   }
 
-  const sun = (birthDetails as Record<string, unknown> | null)
-  const sunSign = 'your chart'
+  const toggleVoice = () => {
+    const SR = (window as unknown as Record<string, unknown>).SpeechRecognition || (window as unknown as Record<string, unknown>).webkitSpeechRecognition
+    if (!SR) {
+      alert('Voice input requires Chrome or Edge browser.')
+      return
+    }
+    if (isListening) {
+      (recognitionRef.current as unknown as { stop: () => void })?.stop()
+      setIsListening(false)
+      return
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const recognition = new (SR as any)()
+    recognition.lang = 'en-IN'
+    recognition.continuous = false
+    recognition.interimResults = false
+    recognition.onresult = (e: SpeechRecognitionEvent) => {
+      const transcript = e.results[0][0].transcript
+      setInput(prev => prev + transcript)
+      setIsListening(false)
+    }
+    recognition.onend = () => setIsListening(false)
+    recognition.onerror = () => setIsListening(false)
+    recognitionRef.current = recognition
+    recognition.start()
+    setIsListening(true)
+  }
 
   return (
     <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
@@ -123,6 +150,20 @@ export default function Chat() {
                   maxHeight: 100, overflowY: 'auto',
                 }}
               />
+              <button onClick={toggleVoice}
+                style={{
+                  width: 44, height: 44, borderRadius: '50%',
+                  cursor: 'pointer', flexShrink: 0,
+                  background: isListening ? '#CC293622' : 'rgba(13,13,43,0.8)',
+                  color: isListening ? '#CC2936' : 'var(--text-stardust)',
+                  fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: `1px solid ${isListening ? '#CC2936' : 'var(--glass-border)'}`,
+                  animation: isListening ? 'pulse-soft 1s ease-in-out infinite' : 'none',
+                }}
+                title={isListening ? 'Stop listening' : 'Voice input (Chrome/Edge)'}
+              >
+                🎤
+              </button>
               <button onClick={() => sendMessage()} disabled={isStreaming || !input.trim()}
                 style={{
                   width: 44, height: 44, borderRadius: '50%', border: 'none', cursor: isStreaming ? 'wait' : 'pointer',

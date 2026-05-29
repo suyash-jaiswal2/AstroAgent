@@ -13,13 +13,13 @@ export function PlaceAutocomplete({ value, onChange, onSelect }: Props) {
   const [loading, setLoading] = useState(false)
   const [resolved, setResolved] = useState<PlaceResult | null>(null)
   const [error, setError] = useState('')
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleChange = useCallback((v: string) => {
     onChange(v)
     setResolved(null)
     setError('')
-    clearTimeout(debounceRef.current)
+    clearTimeout(debounceRef.current ?? undefined)
     if (v.length < 3) return
     debounceRef.current = setTimeout(async () => {
       setLoading(true)

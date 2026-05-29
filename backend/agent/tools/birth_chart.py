@@ -235,6 +235,13 @@ def _compute_chart(
             },
             "ayanamsa": round(ayanamsa, 4),
         },
+        "birth_details": {           # ← ADD THIS BLOCK
+            "date": date,
+            "time": effective_time,
+            "latitude": latitude,
+            "longitude": longitude,
+            "timezone": timezone,
+        },
         "meta": {
             "time_unknown": time_unknown,
             "time_unknown_note": (
@@ -259,7 +266,7 @@ def compute_birth_chart(
     Compute a natal (birth) chart using the Swiss Ephemeris.
     Returns both tropical (Western, Placidus houses) and sidereal (Vedic, Lahiri ayanamsa,
     Whole Sign houses) charts with all planet positions, signs, degrees, houses, and the
-    Ascendant. ALWAYS call this tool instead of guessing planetary positions.
+    Ascendant. This also includes birth_details. ALWAYS call this tool instead of guessing planetary positions.
 
     Args:
         date: Birth date in ISO format, e.g. '1990-08-15'

@@ -21,7 +21,7 @@ export const getDashas = (sessionId: string) =>
 export const getYogas = (sessionId: string) =>
   api.get(`/api/sessions/${sessionId}/yogas`).then(r => r.data)
 
-export const CHAT_STREAM_URL = (sessionId: string, message: string) =>
+export const CHAT_STREAM_URL = (_sessionId: string, _message: string) =>
   `${BASE}/api/chat/stream`
 
 export const buildSSEBody = (message: string, sessionId: string) =>

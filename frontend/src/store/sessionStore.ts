@@ -128,7 +128,7 @@ export const useSessionStore = create<SessionStore>()(
             updated[existing] = { ...updated[existing], ...tc }
             return { currentToolCalls: updated }
           }
-          return { currentToolCalls: [...s.currentToolCalls, { tool: tc.tool, status: 'running', step: 0, ...tc }] }
+          return { currentToolCalls: [...s.currentToolCalls, { status: 'running' as const, step: 0, ...tc }] }
         }),
 
       clearActiveTools: () => set({ currentToolCalls: [] }),
