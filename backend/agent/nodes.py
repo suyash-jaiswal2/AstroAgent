@@ -26,7 +26,7 @@ _MODELS = []
 
 if os.getenv("ANTHROPIC_API_KEY"):
     _MODELS.append(ChatAnthropic(
-        model="claude-haiku-4-5",
+        model="claude-3-5-haiku-20241022",
         api_key=os.getenv("ANTHROPIC_API_KEY"),
         max_tokens=2048,
     ))
@@ -175,6 +175,25 @@ Output ONLY valid JSON: {"intent": "<label>", "confidence": 0.0}"""
     return {"intent": intent}
 
 
+def _prune_messages(messages: list) -> list:
+    """Prune large redundant payloads from past ToolMessages to save tokens."""
+    pruned = []
+    for msg in messages:
+        if isinstance(msg, ToolMessage):
+            content = msg.content if isinstance(msg.content, str) else ""
+            if len(content) > 300:
+                summary = f"{msg.name} executed successfully. Data has been formatted into the system prompt context."
+                pruned.append(ToolMessage(
+                    content=summary,
+                    name=msg.name,
+                    tool_call_id=msg.tool_call_id,
+                    status=getattr(msg, "status", "success")
+                ))
+                continue
+        pruned.append(msg)
+    return pruned
+
+
 def reasoning_node(state: AstroAgentState) -> dict:
     """Main ReAct reasoning loop using Claude Haiku with all 9 tools bound."""
     step_count = state.get("step_count", 0) + 1
@@ -230,9 +249,11 @@ Current step: {step_count}/{state.get('max_steps', 8)}"""
 
     model_with_tools = _get_llm(tools=ALL_TOOLS)
 
+    pruned_messages = _prune_messages(state.get("messages", []))
     response = model_with_tools.invoke(
-        [SystemMessage(content=system_prompt)] + state.get("messages", [])
+        [SystemMessage(content=system_prompt)] + pruned_messages
     )
+
 
     updates: dict = {
         "messages": [response],

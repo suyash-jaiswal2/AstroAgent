@@ -125,19 +125,19 @@ def print_scorecard(results: list[dict]) -> None:
         if r["passed"]:
             by_cat[cat]["passed"] += 1
 
-    print(f"\n{'═'*68}")
+    print(f"\n{'='*68}")
     print(f"  ASTROAGENT EVALUATION SCORECARD  |  {datetime.now().strftime('%Y-%m-%d %H:%M')}  |  v{VERSION}")
-    print(f"{'═'*68}")
+    print(f"{'='*68}")
     print(f"  OVERALL: {passed}/{total} passed ({passed/total*100:.1f}%)")
-    print(f"{'─'*68}")
+    print(f"{'-'*68}")
     for cat, data in by_cat.items():
-        bar = "█" * int(data["passed"] / data["total"] * 20)
-        bar += "░" * (20 - len(bar))
+        bar = "#" * int(data["passed"] / data["total"] * 20)
+        bar += "." * (20 - len(bar))
         print(f"  {cat[:32]:<32} {data['passed']:>2}/{data['total']:<2}  {bar}")
-    print(f"{'─'*68}")
+    print(f"{'-'*68}")
     print(f"  Latency p50: {p50}ms   p95: {p95}ms")
     print(f"  Failure rate: {(total-passed)/total*100:.1f}%")
-    print(f"{'═'*68}\n")
+    print(f"{'='*68}\n")
 
 
 async def main():
@@ -154,10 +154,10 @@ async def main():
     print(f"Loaded {len(cases)} test cases.")
 
     if args.dry_run:
-        print("Dry run — validating golden set format only.")
+        print("Dry run - validating golden set format only.")
         for c in cases:
             assert "id" in c and "input" in c and "expected" in c, f"Malformed case: {c.get('id')}"
-        print("All cases valid. ✓")
+        print("All cases valid. [OK]")
         return
 
     async with httpx.AsyncClient(base_url=BASE_URL, timeout=90.0) as client:
@@ -169,15 +169,22 @@ async def main():
             print("ERROR: Backend not running. Start it with: uvicorn api.main:app --reload --port 8000")
             sys.exit(1)
 
-        results = []
-        for i, case in enumerate(cases):
-            if i > 0:
-                await asyncio.sleep(2.0)
-            print(f"  Running {case['id']} ({i+1}/{len(cases)})...", end=" ", flush=True)
-            result = await run_single_case(case, client)
-            status = "✓ PASS" if result["passed"] else "✗ FAIL"
-            print(f"{status}  ({result['latency_ms']}ms)")
-            results.append(result)
+        print(f"Starting execution of {len(cases)} cases with concurrency limit = 3...")
+        
+        sem = asyncio.Semaphore(3)
+        completed_count = 0
+
+        async def run_with_sem(case):
+            nonlocal completed_count
+            async with sem:
+                result = await run_single_case(case, client)
+                completed_count += 1
+                status = "PASS" if result["passed"] else "FAIL"
+                print(f"[{completed_count}/{len(cases)}] Case {case['id']} - {status} ({result['latency_ms']}ms)")
+                return result
+
+        tasks = [run_with_sem(c) for c in cases]
+        results = await asyncio.gather(*tasks)
 
     print_scorecard(results)
 

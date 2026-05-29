@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;500&family=Inter:wght@300;400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-void: #04040C;
+  --color-deep-space: #080818;
+  --color-nebula: #0D0D2B;
+  --color-cosmic: #12123A;
+  --orb-favorable: #F4B942;
+  --orb-introspective: #4B4B9F;
+  --orb-dynamic: #C23B22;
+  --orb-spiritual: #7B4FBF;
+  --orb-neutral: #3D7FBF;
+  --orb-communicative: #3DAB8F;
+  --text-celestial: #E8E8FF;
+  --text-stardust: #9090C0;
+  --text-dim: #505080;
+  --glass-bg: rgba(13, 13, 43, 0.6);
+  --glass-border: rgba(120, 120, 200, 0.15);
+  --glass-blur: blur(16px);
+  --gold: #C9A84C;
+  --gold-bright: #F4D03F;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--color-deep-space);
+  color: var(--text-celestial);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Animations ─────────────────────────────────────────────────────────── */
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.04); filter: brightness(1.1); }
+}
+@keyframes orb-ripple {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+@keyframes energy-stream {
+  0% { opacity: 0; transform: translateX(-80px) scale(0.8); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(0) scale(1); }
+}
+@keyframes fade-in {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes twinkle {
+  0% { opacity: 0.3; } 100% { opacity: 1; }
+}
+@keyframes nebula-drift {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  33% { transform: rotate(8deg) scale(1.05); }
+  66% { transform: rotate(-5deg) scale(0.97); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.6; } 50% { opacity: 1; }
+}
+@keyframes word-appear {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; } 50% { opacity: 0; }
+}
+
+/* ── Glass card ──────────────────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Scroll-style message bubbles ────────────────────────────────────────── */
+.message-ai {
+  border-left: 3px solid var(--gold);
+  padding-left: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-celestial);
+}
+
+.message-user {
+  background: rgba(61, 127, 191, 0.12);
+  border: 1px solid rgba(61, 127, 191, 0.2);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  color: var(--text-celestial);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(120, 120, 200, 0.3); border-radius: 4px; }
+
+/* ── Aura gradients (daily planetary color) ──────────────────────────────── */
+.aura-sunday  { background: linear-gradient(135deg, rgba(255,107,53,0.05) 0%, rgba(247,197,159,0.05) 100%); }
+.aura-monday  { background: linear-gradient(135deg, rgba(200,214,229,0.05) 0%, rgba(223,234,242,0.05) 100%); }
+.aura-tuesday { background: linear-gradient(135deg, rgba(204,41,54,0.05) 0%, rgba(255,107,107,0.05) 100%); }
+.aura-wednesday { background: linear-gradient(135deg, rgba(46,139,87,0.05) 0%, rgba(82,183,136,0.05) 100%); }
+.aura-thursday { background: linear-gradient(135deg, rgba(27,77,142,0.05) 0%, rgba(74,144,217,0.05) 100%); }
+.aura-friday  { background: linear-gradient(135deg, rgba(196,113,237,0.05) 0%, rgba(246,79,89,0.05) 100%); }
+.aura-saturday { background: linear-gradient(135deg, rgba(67,67,67,0.05) 0%, rgba(127,127,127,0.05) 100%); }
