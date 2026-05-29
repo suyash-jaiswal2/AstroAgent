@@ -1,0 +1,48 @@
+[
+  {
+    "id": "TC015",
+    "category": "muhurta_request",
+    "latency_ms": 38320,
+    "tool_calls": [
+      "geocode_place",
+      "compute_birth_chart",
+      "find_muhurta"
+    ],
+    "full_response": "[{'type': 'text', 'text': \"It is an exciting time to be embarking on a new venture, Arjun. Launching a startup is a significant endeavor, and choosing a moment that aligns with supportive celestial energies can provide a wonderful sense of harmony as you begin.\\n\\nBased on your birth chart and the planetary movements over the next 30 days, I have identified the most auspicious windows for your launch. These times have been selected by considering the quality of the lunar nakshatra, the strength ...",
+    "deterministic": {
+      "tool_calls_correct": false,
+      "intent_correct": true,
+      "within_step_budget": true,
+      "response_contains_required": true,
+      "response_excludes_banned": false,
+      "all_passed": false,
+      "pass_count": 3,
+      "total_checks": 5
+    },
+    "llm_judge": {
+      "scores": {
+        "tone_warmth": {
+          "score": 5,
+          "reason": "The tone is deeply supportive, encouraging, and maintains a professional yet spiritual resonance."
+        },
+        "astrological_accuracy": {
+          "score": 5,
+          "reason": "The response correctly applies Vedic principles like Hora lords and Nakshatra qualities to the provided request."
+        },
+        "helpfulness": {
+          "score": 5,
+          "reason": "It provides specific, actionable windows with clear justifications for why each time is auspicious."
+        },
+        "conciseness": {
+          "score": 5,
+          "reason": "The length is perfect, providing necessary detail without becoming overwhelming or verbose."
+        }
+      },
+      "avg_score": 5.0
+    },
+    "tokens": 347,
+    "step_count": 4,
+    "error": null,
+    "passed": false
+  }
+]

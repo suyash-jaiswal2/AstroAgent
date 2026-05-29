@@ -24,11 +24,13 @@ BASE_URL = "http://127.0.0.1:8000"
 VERSION = "1.0.0"
 
 
-def load_cases(category: str | None = None) -> list[dict]:
+def load_cases(category: str | None = None, target_ids: list[str] | None = None) -> list[dict]:
     path = Path(__file__).parent / "golden_set.jsonl"
     cases = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     if category:
         cases = [c for c in cases if c.get("category") == category]
+    if target_ids:
+        cases = [c for c in cases if c.get("id") in target_ids]
     return cases
 
 
@@ -143,7 +145,7 @@ def print_scorecard(results: list[dict]) -> None:
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--category", default=None)
-    parser.add_argument("--case", default=None, help="Run a specific case ID (e.g. TC001)")
+    parser.add_argument("--id", default=None, help="Run specific case IDs (comma separated, e.g. TC001,TC002)")
     parser.add_argument("--output", default=None)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--concurrency", type=int, default=1, help="Concurrent cases to run")
@@ -151,8 +153,9 @@ async def main():
     args = parser.parse_args()
 
     cases = load_cases(args.category)
-    if args.case:
-        cases = [c for c in cases if c.get("id") == args.case]
+    if args.id:
+        target_ids = [x.strip() for x in args.id.split(",")]
+        cases = [c for c in cases if c.get("id") in target_ids]
     print(f"Loaded {len(cases)} test cases.")
 
     if args.dry_run:

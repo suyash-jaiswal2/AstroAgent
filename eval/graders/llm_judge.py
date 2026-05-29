@@ -19,7 +19,7 @@ load_dotenv(Path(__file__).resolve().parent.parent.parent / "backend" / ".env")
 _gemini_judge = None
 if os.getenv("GEMINI_API_KEY"):
     _gemini_judge = ChatGoogleGenerativeAI(
-        model="gemini-flash-latest",
+        model="gemini-3.1-flash-lite",
         api_key=os.getenv("GEMINI_API_KEY"),
         temperature=0.1,
         max_tokens=512,
@@ -77,9 +77,15 @@ async def run_llm_judge(case: dict, response: str) -> dict:
             raise RuntimeError("No LLM API key configured for Judge.")
             
         result = await judge.ainvoke([HumanMessage(content=prompt)])
-        raw = result.content.strip()
-        # Strip markdown fences
-        raw = re.sub(r"```json|```", "", raw).strip()
+        content = result.content
+        if isinstance(content, list):
+            raw = "".join([c.get("text", "") for c in content if isinstance(c, dict)])
+        else:
+            raw = str(content)
+        raw = raw.strip()
+        match = re.search(r'\{.*\}', raw, re.DOTALL)
+        if match:
+            raw = match.group(0)
         parsed = json.loads(raw)
         
         parsed_scores = parsed.get("scores", {})
