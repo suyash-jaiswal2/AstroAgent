@@ -16,6 +16,9 @@ class BirthDetailsRequest(BaseModel):
     date: str
     time: str | None = None
     place: str
+    latitude: float | None = None
+    longitude: float | None = None
+    timezone: str | None = None
     time_unknown: bool = False
 
 
