@@ -20,6 +20,7 @@ export function useSSE() {
         })
 
         if (!response.ok || !response.body) {
+          addToken("My apologies, dear seeker. The cosmic connection was briefly interrupted. Please give me a brief moment to realign with the stars and try asking your question again.")
           finalizeMessage({})
           return
         }
@@ -51,12 +52,17 @@ export function useSSE() {
               else if (eventType === 'tool_start') setToolCall({ tool: data.tool, status: 'running', step: data.step })
               else if (eventType === 'tool_end') setToolCall({ tool: data.tool, status: 'done', step: 0 })
               else if (eventType === 'done') finalizeMessage(data)
-              else if (eventType === 'error') { console.error('SSE error:', data); finalizeMessage({}) }
+              else if (eventType === 'error') {
+                console.error('SSE error:', data)
+                addToken("My apologies, dear seeker. The cosmic energies are currently highly congested. Please give me a brief moment to realign with the stars and try asking your question again.")
+                finalizeMessage({})
+              }
             } catch { /* skip malformed */ }
           }
         }
       } catch (err) {
         console.error('Stream failed:', err)
+        addToken("The celestial connection was briefly interrupted. Please give me a brief moment to realign with the stars and try asking your question again.")
         finalizeMessage({})
       }
     },
