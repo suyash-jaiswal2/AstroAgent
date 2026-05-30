@@ -15,7 +15,18 @@ from db.database import init_db
 async def lifespan(app: FastAPI):
     # ── Startup ────────────────────────────────────────────────────────────────
     await init_db()
-    # ChromaDB init is deferred until knowledge_base is implemented (Step 30)
+    
+    # Dynamic ChromaDB Ingestion
+    chroma_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge_base", "chroma_store"))
+    if not os.path.exists(chroma_path) or not os.listdir(chroma_path):
+        print("ChromaDB store is missing or empty. Running dynamic knowledge base ingestion...")
+        try:
+            from knowledge_base.ingest import ingest
+            ingest(reset=True)
+            print("ChromaDB knowledge base successfully ingested.")
+        except Exception as e:
+            print(f"ChromaDB dynamic ingestion failed: {e}")
+            
     yield
     # ── Shutdown ───────────────────────────────────────────────────────────────
 
