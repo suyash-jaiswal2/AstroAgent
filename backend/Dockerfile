@@ -14,6 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# Make the entire application directory fully writable (fixes sqlite3/chromadb permissions for non-root users on Render)
+RUN chmod -R 777 /app
+
 # Pre-build the ChromaDB collection from knowledge base docs
 # (If chroma_store already exists on mounted disk, this is a no-op due to upsert)
 RUN python knowledge_base/ingest.py || echo "Ingest skipped (may run on first start)"

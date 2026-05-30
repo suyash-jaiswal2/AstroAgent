@@ -3,9 +3,15 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import DeclarativeBase
 from dotenv import load_dotenv
 
+from pathlib import Path
+
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./astroagent.db")
+BASE_DIR = Path(__file__).resolve().parent.parent
+default_db_path = BASE_DIR / "astroagent.db"
+default_db_url = f"sqlite+aiosqlite:///{default_db_path.as_posix()}"
+
+DATABASE_URL = os.getenv("DATABASE_URL", default_db_url)
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
