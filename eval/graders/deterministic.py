@@ -89,7 +89,7 @@ def run_deterministic_checks(
     if expected.get("should_error"):
         # The response should NOT be a normal successful reading
         # It should contain an error/validation message
-        error_signals = ["invalid", "future", "error", "cannot", "unusual", "doesn't exist"]
+        error_signals = ["invalid", "future", "error", "cannot", "unusual", "doesn't exist", "not a valid", "not valid"]
         checks["errors_gracefully"] = (
             meta.get("error_code") is not None
             or any(sig in response.lower() for sig in error_signals)

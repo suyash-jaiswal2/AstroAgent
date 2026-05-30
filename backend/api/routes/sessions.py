@@ -75,11 +75,16 @@ async def save_birth_details(
         raise HTTPException(status_code=422, detail=f"Invalid date format or impossible date: {body.date}")
 
     if birth_date > date_type.today():
-        raise HTTPException(status_code=422, detail="Birth date cannot be in the future.")
-    if birth_date.year < 1800 or birth_date.year > 2020:
+        raise HTTPException(status_code=422, detail=f"Birth date {body.date} is in the future. Please provide a valid past birth date.")
+    if birth_date.year < 1900:
         raise HTTPException(
             status_code=422,
-            detail=f"Birth year {birth_date.year} is outside the expected range (1800–2020)."
+            detail=f"Birth year {birth_date.year} is unusually old and outside the expected range (1900–2020). Please verify this date."
+        )
+    if birth_date.year > 2020:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Birth year {birth_date.year} is outside the expected range (1900–2020). Please verify this date."
         )
 
     birth_dict = body.model_dump()

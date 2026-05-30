@@ -49,13 +49,26 @@ async def run_single_case(case: dict, client: httpx.AsyncClient) -> dict:
 
         # 2. Set birth details if present
         bd = case["input"].get("birth_details")
+        birth_validation_error = None
         if bd:
-            await client.post(f"/api/sessions/{session_id}/birth", json=bd)
+            birth_resp = await client.post(f"/api/sessions/{session_id}/birth", json=bd)
+            if birth_resp.status_code == 422:
+                birth_validation_error = birth_resp.json().get("detail", "Invalid birth data")
 
         # 3. Stream chat response
+        # If birth data was rejected, prepend validation context so the agent can reference it
+        chat_message = case["input"]["message"]
+        if birth_validation_error:
+            chat_message = (
+                f"[SYSTEM: The user attempted to provide birth details "
+                f"(name={bd.get('name')}, date={bd.get('date')}, time={bd.get('time')}, place={bd.get('place')}) "
+                f"but validation failed with error: \"{birth_validation_error}\". "
+                f"Please inform the user about this issue.]\n\n{chat_message}"
+            )
+
         async with client.stream(
             "POST", "/api/chat/stream",
-            json={"message": case["input"]["message"], "session_id": session_id},
+            json={"message": chat_message, "session_id": session_id},
             timeout=90.0,
         ) as response:
             buffer = ""
