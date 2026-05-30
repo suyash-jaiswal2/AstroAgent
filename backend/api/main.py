@@ -46,4 +46,9 @@ if os.getenv("ENV") == "development":
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "version": "1.0.0"}
+    return {
+        "status": "ok",
+        "version": "1.0.0",
+        "gemini_api_key_configured": bool(os.getenv("GEMINI_API_KEY")),
+        "groq_api_key_configured": bool(os.getenv("GROQ_API_KEY")),
+    }
