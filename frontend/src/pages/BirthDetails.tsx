@@ -11,7 +11,7 @@ import { createSession, saveBirthDetails } from '../lib/api'
 
 export default function BirthDetails() {
   const navigate = useNavigate()
-  const { sessionId, setSessionId, setBirthDetails, reset } = useSessionStore()
+  const { setSessionId, setBirthDetails, reset } = useSessionStore()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (details: Parameters<typeof setBirthDetails>[0]) => {
