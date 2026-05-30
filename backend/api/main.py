@@ -1,3 +1,4 @@
+import asyncio
 import os
 from contextlib import asynccontextmanager
 
@@ -16,16 +17,22 @@ async def lifespan(app: FastAPI):
     # ── Startup ────────────────────────────────────────────────────────────────
     await init_db()
     
-    # Dynamic ChromaDB Ingestion
-    chroma_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge_base", "chroma_store"))
-    if not os.path.exists(chroma_path) or not os.listdir(chroma_path):
-        print("ChromaDB store is missing or empty. Running dynamic knowledge base ingestion...")
-        try:
-            from knowledge_base.ingest import ingest
-            ingest(reset=True)
-            print("ChromaDB knowledge base successfully ingested.")
-        except Exception as e:
-            print(f"ChromaDB dynamic ingestion failed: {e}")
+    # Dynamic ChromaDB Ingestion (runs in background so it does not block uvicorn port binding)
+    async def run_ingestion_in_background():
+        chroma_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge_base", "chroma_store"))
+        if not os.path.exists(chroma_path) or not os.listdir(chroma_path):
+            print("ChromaDB store is missing or empty. Running dynamic knowledge base ingestion in the background...")
+            try:
+                from knowledge_base.ingest import ingest
+                loop = asyncio.get_event_loop()
+                await loop.run_in_executor(None, ingest, True)
+                print("ChromaDB knowledge base successfully ingested in the background.")
+            except Exception as e:
+                print(f"ChromaDB dynamic ingestion failed: {e}")
+        else:
+            print("ChromaDB store already exists. Skipping ingestion.")
+
+    asyncio.create_task(run_ingestion_in_background())
             
     yield
     # ── Shutdown ───────────────────────────────────────────────────────────────
