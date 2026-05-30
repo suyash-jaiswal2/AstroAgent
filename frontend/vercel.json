@@ -1,8 +1,8 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "env": {
-    "VITE_API_URL": "@astroagent_api_url"
-  }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
