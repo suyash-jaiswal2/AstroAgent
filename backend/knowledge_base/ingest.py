@@ -111,8 +111,8 @@ def ingest(reset: bool = False) -> None:
             try:
                 emb = model.embed_query(chunk)
                 embeddings.append(emb)
-                # Sleep 0.6 seconds to stay well below the 100 RPM free tier limit
-                time.sleep(0.6)
+                # Sleep 1.3 seconds to stay well below both 100 RPM and 30,000 TPM free tier limits
+                time.sleep(1.3)
                 break
             except Exception as e:
                 if "RESOURCE_EXHAUSTED" in str(e) or "429" in str(e):
