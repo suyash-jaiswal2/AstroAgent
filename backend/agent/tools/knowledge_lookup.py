@@ -18,7 +18,7 @@ COLLECTION_NAME = "astrology_knowledge"
 def _get_collection():
     """Lazily initialize ChromaDB collection (cached after first call)."""
     import chromadb
-    from sentence_transformers import SentenceTransformer
+    from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
     client = chromadb.PersistentClient(path=CHROMA_PATH)
     try:
@@ -27,7 +27,10 @@ def _get_collection():
         # Collection not yet created — ingest.py must be run first
         return None, None
 
-    model = SentenceTransformer("all-MiniLM-L6-v2")
+    model = GoogleGenerativeAIEmbeddings(
+        model="models/gemini-embedding-2",
+        google_api_key=os.getenv("GEMINI_API_KEY")
+    )
     return collection, model
 
 
@@ -54,7 +57,7 @@ def knowledge_lookup(query: str, context: str = "") -> str:
 
     try:
         full_query = f"{context} {query}".strip() if context else query
-        embedding = model.encode(full_query).tolist()
+        embedding = model.embed_query(full_query)
 
         results = collection.query(
             query_embeddings=[embedding],

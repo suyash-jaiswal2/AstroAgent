@@ -10,6 +10,10 @@ import argparse
 import os
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Force load .env from the backend directory
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 # Chunk settings (matching PRD specification)
 CHUNK_SIZE_TOKENS = 300
@@ -44,7 +48,7 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE_WORDS, overlap: int = OVE
 
 def ingest(reset: bool = False) -> None:
     import chromadb
-    from sentence_transformers import SentenceTransformer
+    from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
     print("Initializing ChromaDB and embedding model...")
     CHROMA_PATH.mkdir(parents=True, exist_ok=True)
@@ -62,8 +66,11 @@ def ingest(reset: bool = False) -> None:
         metadata={"hnsw:space": "cosine"},
     )
 
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-    print("  Embedding model loaded: all-MiniLM-L6-v2")
+    model = GoogleGenerativeAIEmbeddings(
+        model="models/gemini-embedding-2",
+        google_api_key=os.getenv("GEMINI_API_KEY")
+    )
+    print("  Embedding model loaded: models/gemini-embedding-2")
 
     # Scan all .md files
     md_files = list(DOCS_PATH.rglob("*.md"))
@@ -104,7 +111,7 @@ def ingest(reset: bool = False) -> None:
         batch_ids = all_ids[i:i + batch_size]
         batch_metas = all_metadatas[i:i + batch_size]
 
-        embeddings = model.encode(batch_docs, show_progress_bar=False).tolist()
+        embeddings = [model.embed_query(doc) for doc in batch_docs]
         collection.upsert(
             ids=batch_ids,
             documents=batch_docs,
@@ -113,7 +120,7 @@ def ingest(reset: bool = False) -> None:
         )
         print(f"  Upserted batch {i // batch_size + 1}/{(len(all_chunks) - 1) // batch_size + 1}")
 
-    print(f"\n✓ Ingest complete. {len(all_chunks)} chunks stored in ChromaDB.")
+    print(f"\n[SUCCESS] Ingest complete. {len(all_chunks)} chunks stored in ChromaDB.")
     print(f"  Collection: '{COLLECTION_NAME}' at {CHROMA_PATH}")
 
 
