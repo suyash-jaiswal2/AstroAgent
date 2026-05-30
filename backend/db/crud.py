@@ -31,7 +31,8 @@ async def update_session_birth_details(db: AsyncSession, session_id: str,
                                         birth_details: dict) -> Session | None:
     session = await get_session(db, session_id)
     if not session:
-        return None
+        session = Session(id=session_id)
+        db.add(session)
     session.birth_details_json = json.dumps(birth_details)
     session.updated_at = datetime.utcnow()
     await db.commit()
