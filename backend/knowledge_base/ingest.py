@@ -67,10 +67,10 @@ def ingest(reset: bool = False) -> None:
     )
 
     model = GoogleGenerativeAIEmbeddings(
-        model="models/gemini-embedding-2",
+        model="models/gemini-embedding-001",
         google_api_key=os.getenv("GEMINI_API_KEY")
     )
-    print("  Embedding model loaded: models/gemini-embedding-2")
+    print("  Embedding model loaded: models/gemini-embedding-001")
 
     # Scan all .md files
     md_files = list(DOCS_PATH.rglob("*.md"))
@@ -104,22 +104,34 @@ def ingest(reset: bool = False) -> None:
 
     print(f"  Total chunks to embed: {len(all_chunks)}")
 
-    # Embed and upsert in batches of 64
-    batch_size = 64
-    for i in range(0, len(all_chunks), batch_size):
-        batch_docs = all_chunks[i:i + batch_size]
-        batch_ids = all_ids[i:i + batch_size]
-        batch_metas = all_metadatas[i:i + batch_size]
+    import time
+    embeddings: list[list[float]] = []
+    for idx, chunk in enumerate(all_chunks):
+        for attempt in range(5):
+            try:
+                emb = model.embed_query(chunk)
+                embeddings.append(emb)
+                # Sleep 0.6 seconds to stay well below the 100 RPM free tier limit
+                time.sleep(0.6)
+                break
+            except Exception as e:
+                if "RESOURCE_EXHAUSTED" in str(e) or "429" in str(e):
+                    sleep_time = 2 ** attempt + 5
+                    print(f"  [Rate Limit] Exceeded embedding quota on chunk {idx + 1}/{len(all_chunks)}. Retrying in {sleep_time}s...")
+                    time.sleep(sleep_time)
+                else:
+                    raise e
+        if len(embeddings) != idx + 1:
+            raise RuntimeError(f"Failed to generate embedding for chunk {idx}")
+        if (idx + 1) % 10 == 0 or idx + 1 == len(all_chunks):
+            print(f"  Embedded {idx + 1}/{len(all_chunks)} chunks...")
 
-        embeddings = [model.embed_query(doc) for doc in batch_docs]
-        collection.upsert(
-            ids=batch_ids,
-            documents=batch_docs,
-            embeddings=embeddings,
-            metadatas=batch_metas,
-        )
-        print(f"  Upserted batch {i // batch_size + 1}/{(len(all_chunks) - 1) // batch_size + 1}")
-
+    collection.upsert(
+        ids=all_ids,
+        documents=all_chunks,
+        embeddings=embeddings,
+        metadatas=all_metadatas,
+    )
     print(f"\n[SUCCESS] Ingest complete. {len(all_chunks)} chunks stored in ChromaDB.")
     print(f"  Collection: '{COLLECTION_NAME}' at {CHROMA_PATH}")
 
