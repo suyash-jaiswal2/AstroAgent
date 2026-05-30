@@ -102,6 +102,8 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
 
                 # ── Token streaming ────────────────────────────────────────────
                 if kind == "on_chat_model_stream":
+                    if "intent_router" in event.get("tags", []):
+                        continue
                     chunk = event["data"].get("chunk")
                     if chunk and hasattr(chunk, "content"):
                         text = chunk.content

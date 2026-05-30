@@ -156,7 +156,7 @@ Output ONLY valid JSON: {"intent": "<label>", "confidence": 0.0}"""
         response = _get_llm().invoke([
             SystemMessage(content=router_prompt),
             HumanMessage(content=last_user_msg),
-        ])
+        ], config={"tags": ["intent_router"]})
         content = response.content
         if isinstance(content, list):
             raw = "".join([c.get("text", "") for c in content if isinstance(c, dict)])
