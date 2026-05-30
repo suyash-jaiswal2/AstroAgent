@@ -6,8 +6,8 @@ backend/*.pyc
 backend/.env
 backend/astroagent.db
 
-# ChromaDB (rebuilt on deploy)
-backend/knowledge_base/chroma_store/
+# ChromaDB (pre-built and committed to Git to save memory/rate-limits)
+# backend/knowledge_base/chroma_store/
 
 # Node
 frontend/node_modules/
