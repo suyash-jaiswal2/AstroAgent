@@ -17,22 +17,24 @@ async def lifespan(app: FastAPI):
     # ── Startup ────────────────────────────────────────────────────────────────
     await init_db()
     
-    # Dynamic ChromaDB Ingestion (runs in background so it does not block uvicorn port binding)
-    async def run_ingestion_in_background():
+    # Dynamic ChromaDB Ingestion (runs in an isolated background process so it doesn't block uvicorn or conflict with event loops)
+    def run_ingestion_in_background():
         chroma_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge_base", "chroma_store"))
         if not os.path.exists(chroma_path) or not os.listdir(chroma_path):
-            print("ChromaDB store is missing or empty. Running dynamic knowledge base ingestion in the background...")
+            print("ChromaDB store is missing or empty. Launching dynamic ingestion background process...")
             try:
-                from knowledge_base.ingest import ingest
-                loop = asyncio.get_event_loop()
-                await loop.run_in_executor(None, ingest, True)
-                print("ChromaDB knowledge base successfully ingested in the background.")
+                import subprocess
+                import sys
+                ingest_script = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "knowledge_base", "ingest.py"))
+                # Launch ingest.py as a background process with reset flag
+                subprocess.Popen([sys.executable, ingest_script, "--reset"], close_fds=True)
+                print("Dynamic ingestion background process launched successfully.")
             except Exception as e:
-                print(f"ChromaDB dynamic ingestion failed: {e}")
+                print(f"Failed to launch dynamic ingestion background process: {e}")
         else:
             print("ChromaDB store already exists. Skipping ingestion.")
 
-    asyncio.create_task(run_ingestion_in_background())
+    run_ingestion_in_background()
             
     yield
     # ── Shutdown ───────────────────────────────────────────────────────────────
