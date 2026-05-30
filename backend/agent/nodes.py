@@ -293,7 +293,18 @@ def response_formatter_node(state: AstroAgentState) -> dict:
     if not isinstance(last_msg, AIMessage):
         return {}
 
-    content = last_msg.content if isinstance(last_msg.content, str) else str(last_msg.content)
+    content = last_msg.content
+    if isinstance(content, list):
+        parts = []
+        for part in content:
+            if isinstance(part, dict) and part.get("type") == "text":
+                parts.append(part.get("text", ""))
+            elif isinstance(part, str):
+                parts.append(part)
+        content = "".join(parts)
+    elif not isinstance(content, str):
+        content = str(content)
+
     intent = state.get("intent", "free_form")
 
     sensitive_intents = {"chart_request","daily_horoscope","free_form","yoga_query",
