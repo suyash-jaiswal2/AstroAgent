@@ -21,7 +21,7 @@ export function useSSE() {
 
         if (!response.ok || !response.body) {
           addToken("My apologies, dear seeker. The cosmic connection was briefly interrupted. Please give me a brief moment to realign with the stars and try asking your question again.")
-          finalizeMessage({})
+          setTimeout(() => finalizeMessage({}), 50)
           return
         }
 
@@ -55,7 +55,7 @@ export function useSSE() {
               else if (eventType === 'error') {
                 console.error('SSE error:', data)
                 addToken("My apologies, dear seeker. The cosmic energies are currently highly congested. Please give me a brief moment to realign with the stars and try asking your question again.")
-                finalizeMessage({})
+                setTimeout(() => finalizeMessage({}), 50)
               }
             } catch { /* skip malformed */ }
           }
@@ -63,7 +63,7 @@ export function useSSE() {
       } catch (err) {
         console.error('Stream failed:', err)
         addToken("The celestial connection was briefly interrupted. Please give me a brief moment to realign with the stars and try asking your question again.")
-        finalizeMessage({})
+        setTimeout(() => finalizeMessage({}), 50)
       }
     },
     [addUserMessage, startAssistantMessage, addToken, finalizeMessage, setToolCall]

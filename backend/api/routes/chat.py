@@ -172,6 +172,9 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                             }
 
         except Exception as e:
+            import traceback
+            print("ERROR in chat_stream event generator:")
+            traceback.print_exc()
             yield {"event": "error", "data": json.dumps({"message": str(e)})}
 
         # ── Post-stream persistence ────────────────────────────────────────────
