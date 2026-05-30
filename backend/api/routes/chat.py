@@ -64,7 +64,11 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
     # Ensure session exists
     session = await crud.get_session(db, request.session_id)
     if not session:
-        session = await crud.create_session(db)
+        from db.models import Session as DbSession
+        session = DbSession(id=request.session_id)
+        db.add(session)
+        await db.commit()
+        await db.refresh(session)
 
     session_data = {
         "birth_details": json.loads(session.birth_details_json) if session.birth_details_json else None,

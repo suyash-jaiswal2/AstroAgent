@@ -11,15 +11,17 @@ import { createSession, saveBirthDetails } from '../lib/api'
 
 export default function BirthDetails() {
   const navigate = useNavigate()
-  const { sessionId, setSessionId, setBirthDetails } = useSessionStore()
+  const { sessionId, setSessionId, setBirthDetails, reset } = useSessionStore()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (details: Parameters<typeof setBirthDetails>[0]) => {
     setLoading(true)
     try {
-      let sid = sessionId
-      if (!sid) { const s = await createSession(); sid = s.session_id; setSessionId(sid!) }
-      await saveBirthDetails(sid!, details as unknown as Record<string, unknown>)
+      reset() // Clear all old messages, natal chart, and stale session states
+      const s = await createSession()
+      const sid = s.session_id
+      setSessionId(sid)
+      await saveBirthDetails(sid, details as unknown as Record<string, unknown>)
       setBirthDetails(details)
       navigate('/chat')
     } catch (err) {
