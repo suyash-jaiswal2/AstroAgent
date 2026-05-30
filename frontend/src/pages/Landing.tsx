@@ -16,11 +16,16 @@ export default function Landing() {
   const { sessionId, setSessionId, birthDetails } = useSessionStore()
 
   const handleBegin = async () => {
-    if (!sessionId) {
-      const data = await createSession()
-      setSessionId(data.session_id)
+    try {
+      if (!sessionId) {
+        const data = await createSession()
+        setSessionId(data.session_id)
+      }
+      navigate('/birth')
+    } catch (err) {
+      console.error("Failed to start session:", err)
+      alert("Cannot connect to the AstroAgent server. Please verify your backend server is running and your VITE_API_URL is configured correctly.")
     }
-    navigate('/birth')
   }
 
   const handleContinue = () => navigate('/chat')

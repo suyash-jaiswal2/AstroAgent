@@ -27,6 +27,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:3000",
+        "https://astro-agent-ten.vercel.app",
+        "https://astro-agent.vercel.app",
         os.getenv("FRONTEND_URL", "https://placeholder.vercel.app"),
     ],
     allow_credentials=True,
