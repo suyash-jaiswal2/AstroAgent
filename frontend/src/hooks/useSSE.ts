@@ -12,56 +12,67 @@ export function useSSE() {
       addUserMessage(message)
       startAssistantMessage()
 
+      // Set tool activity state before fetch to indicate the celestial calculations are running
+      setToolCall({ tool: 'Consulting celestial coordinates...', status: 'running', step: 1 })
+
       try {
         const url = `${BASE}/api/chat/stream?message=${encodeURIComponent(message)}&session_id=${encodeURIComponent(sessionId)}`
         const response = await fetch(url, {
           method: 'GET',
-          headers: { 'Accept': 'text/event-stream' },
+          headers: { 'Accept': 'application/json' },
         })
 
-        if (!response.ok || !response.body) {
+        if (!response.ok) {
+          setToolCall({ tool: 'Consulting celestial coordinates...', status: 'error', step: 1 })
           addToken("My apologies, dear seeker. The cosmic connection was briefly interrupted. Please give me a brief moment to realign with the stars and try asking your question again.")
           setTimeout(() => finalizeMessage({}), 50)
           return
         }
 
-        const reader = response.body.getReader()
-        const decoder = new TextDecoder()
-        let buffer = ''
+        const data = await response.json()
+        const content = data.content || ''
 
-        while (true) {
-          const { value, done } = await reader.read()
-          if (done) break
-          buffer += decoder.decode(value, { stream: true })
+        // Set tool activity as successfully completed
+        setToolCall({ tool: 'Consulting celestial coordinates...', status: 'done', step: 1 })
 
-          const parts = buffer.split('\n\n')
-          buffer = parts.pop() || ''
+        if (!content) {
+          addToken("No response could be fetched from the cosmos. Please try again.")
+          setTimeout(() => finalizeMessage({}), 50)
+          return
+        }
 
-          for (const part of parts) {
-            const lines = part.trim().split('\n')
-            let eventType = ''
-            let dataStr = ''
-            for (const line of lines) {
-              if (line.startsWith('event:')) eventType = line.slice(6).trim()
-              if (line.startsWith('data:')) dataStr = line.slice(5).trim()
+        // Split text by spaces but preserve them as separate array items
+        const words = content.split(/(\s+)/)
+        let index = 0
+
+        const typeNextWord = () => {
+          if (index < words.length) {
+            addToken(words[index])
+            index++
+
+            // Premium organic pacing:
+            // - Base speed of 12ms per word element
+            // - Add a realistic pause (180ms) at the end of sentences/punctuation to simulate thought
+            let delay = 12
+            const currentWord = words[index - 1]
+            if (currentWord.includes('.') || currentWord.includes('?') || currentWord.includes('!') || currentWord.includes('\n')) {
+              delay = 180
+            } else if (currentWord.length > 8) {
+              delay = 20
             }
-            if (!eventType || !dataStr) continue
-            try {
-              const data = JSON.parse(dataStr)
-              if (eventType === 'token') addToken(data.text || '')
-              else if (eventType === 'tool_start') setToolCall({ tool: data.tool, status: 'running', step: data.step })
-              else if (eventType === 'tool_end') setToolCall({ tool: data.tool, status: 'done', step: 0 })
-              else if (eventType === 'done') finalizeMessage(data)
-              else if (eventType === 'error') {
-                console.error('SSE error:', data)
-                addToken("My apologies, dear seeker. The cosmic energies are currently highly congested. Please give me a brief moment to realign with the stars and try asking your question again.")
-                setTimeout(() => finalizeMessage({}), 50)
-              }
-            } catch { /* skip malformed */ }
+
+            setTimeout(typeNextWord, delay)
+          } else {
+            finalizeMessage(data)
           }
         }
+
+        // Trigger typing simulation
+        typeNextWord()
+
       } catch (err) {
-        console.error('Stream failed:', err)
+        console.error('Fetch failed:', err)
+        setToolCall({ tool: 'Consulting celestial coordinates...', status: 'error', step: 1 })
         addToken("The celestial connection was briefly interrupted. Please give me a brief moment to realign with the stars and try asking your question again.")
         setTimeout(() => finalizeMessage({}), 50)
       }
