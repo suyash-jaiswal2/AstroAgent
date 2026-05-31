@@ -15,7 +15,7 @@ frontend/dist/
 frontend/.env.local
 
 # Eval results (keep log, not raw results)
-eval/results/*.json
+# eval/results/*.json
 
 # OS
 .DS_Store

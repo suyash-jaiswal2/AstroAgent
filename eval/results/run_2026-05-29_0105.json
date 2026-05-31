@@ -1,0 +1,80 @@
+[
+  {
+    "id": "TC025",
+    "category": "off_topic",
+    "latency_ms": 106745,
+    "tool_calls": [
+      "geocode_place"
+    ],
+    "full_response": "",
+    "deterministic": {
+      "tool_calls_correct": true,
+      "intent_correct": true,
+      "within_step_budget": true,
+      "response_contains_required": false,
+      "response_excludes_banned": true,
+      "all_passed": false,
+      "pass_count": 4,
+      "total_checks": 5
+    },
+    "llm_judge": {
+      "scores": {
+        "tone_warmth": {
+          "score": 3,
+          "reason": "Judge error: 429 You exceeded your current quota, please check "
+        },
+        "helpfulness": {
+          "score": 3,
+          "reason": "Judge error: 429 You exceeded your current quota, please check "
+        },
+        "conciseness": {
+          "score": 3,
+          "reason": "Judge error: 429 You exceeded your current quota, please check "
+        }
+      },
+      "avg_score": 3.0
+    },
+    "tokens": 0,
+    "step_count": 1,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbVXYYoPjqwpvW197g9Cv'}",
+    "passed": false
+  },
+  {
+    "id": "TC026",
+    "category": "off_topic",
+    "latency_ms": 71491,
+    "tool_calls": [],
+    "full_response": "",
+    "deterministic": {
+      "tool_calls_correct": true,
+      "intent_correct": true,
+      "within_step_budget": true,
+      "response_contains_required": false,
+      "response_excludes_banned": true,
+      "all_passed": false,
+      "pass_count": 4,
+      "total_checks": 5
+    },
+    "llm_judge": {
+      "scores": {
+        "tone_warmth": {
+          "score": 3,
+          "reason": "Judge error: 429 You exceeded your current quota, please check "
+        },
+        "helpfulness": {
+          "score": 3,
+          "reason": "Judge error: 429 You exceeded your current quota, please check "
+        },
+        "conciseness": {
+          "score": 3,
+          "reason": "Judge error: 429 You exceeded your current quota, please check "
+        }
+      },
+      "avg_score": 3.0
+    },
+    "tokens": 0,
+    "step_count": 0,
+    "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CbVXVwDSbof5LYZ9iwpY2'}",
+    "passed": false
+  }
+]
