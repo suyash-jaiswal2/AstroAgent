@@ -213,4 +213,11 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
             }),
         }
 
-    return EventSourceResponse(event_generator())
+    return EventSourceResponse(
+        event_generator(),
+        headers={
+            "X-Accel-Buffering": "no",
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        }
+    )
