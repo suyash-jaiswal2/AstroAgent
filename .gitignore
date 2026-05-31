@@ -21,3 +21,9 @@ frontend/.env.local
 .DS_Store
 Thumbs.db
 .vercel
+
+
+failures.txt
+PRD.md
+scratch.py
+scratch_tc015.json
