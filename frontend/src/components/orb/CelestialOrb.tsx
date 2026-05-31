@@ -2,13 +2,20 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSessionStore } from '../../store/sessionStore'
 
+import orbNeutral from '../../assets/orb_neutral.png'
+import orbFavorable from '../../assets/orb_favorable.png'
+import orbIntrospective from '../../assets/orb_introspective.png'
+import orbDynamic from '../../assets/orb_dynamic.png'
+import orbSpiritual from '../../assets/orb_spiritual.png'
+import orbCommunicative from '../../assets/orb_communicative.png'
+
 const MOOD_COLORS = {
-  favorable:     { primary: '#F4B942', secondary: '#8B6914', glow: '#F4B94244' },
-  introspective: { primary: '#4B4B9F', secondary: '#1a1a4a', glow: '#4B4B9F44' },
-  dynamic:       { primary: '#C23B22', secondary: '#5a1a0a', glow: '#C23B2244' },
-  spiritual:     { primary: '#7B4FBF', secondary: '#2d1a5c', glow: '#7B4FBF44' },
-  neutral:       { primary: '#3D7FBF', secondary: '#1a3d5c', glow: '#3D7FBF44' },
-  communicative: { primary: '#3DAB8F', secondary: '#1a5c48', glow: '#3DAB8F44' },
+  favorable:     { primary: '#F4B942', secondary: '#8B6914', glow: '#F4B94244', image: orbFavorable },
+  introspective: { primary: '#4B4B9F', secondary: '#1a1a4a', glow: '#4B4B9F44', image: orbIntrospective },
+  dynamic:       { primary: '#C23B22', secondary: '#5a1a0a', glow: '#C23B2244', image: orbDynamic },
+  spiritual:     { primary: '#7B4FBF', secondary: '#2d1a5c', glow: '#7B4FBF44', image: orbSpiritual },
+  neutral:       { primary: '#3D7FBF', secondary: '#1a3d5c', glow: '#3D7FBF44', image: orbNeutral },
+  communicative: { primary: '#3DAB8F', secondary: '#1a5c48', glow: '#3DAB8F44', image: orbCommunicative },
 }
 
 interface CelestialOrbProps {
@@ -39,39 +46,79 @@ export function CelestialOrb({ size = 200, showRipple = false }: CelestialOrbPro
       {/* Outer glow layer */}
       <div
         style={{
-          position: 'absolute', inset: -size * 0.3,
+          position: 'absolute', inset: -size * 0.25,
           borderRadius: '50%',
           background: `radial-gradient(circle, ${colors.glow} 0%, transparent 70%)`,
           animation: 'orb-breathe 4s ease-in-out infinite',
           animationDuration: orbMood.pulseSpeed === 'fast' ? '2s' : orbMood.pulseSpeed === 'medium' ? '3s' : '4s',
           pointerEvents: 'none',
+          mixBlendMode: 'screen',
+        }}
+      />
+
+      {/* 3D Tilted Astro Ring */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: -size * 0.15,
+          pointerEvents: 'none',
+          transform: 'rotateX(72deg) rotateY(12deg)',
+          transformStyle: 'preserve-3d',
+        }}
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 25, ease: 'linear' }}
+          style={{
+            width: '100%', height: '100%',
+            borderRadius: '50%',
+            border: '2px double rgba(201, 168, 76, 0.45)',
+            borderTopColor: 'transparent',
+            borderBottomColor: 'transparent',
+            boxShadow: `0 0 15px rgba(201, 168, 76, 0.2)`,
+          }}
+        />
+      </div>
+
+      {/* Outer Dashed Orbit Tracker */}
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ repeat: Infinity, duration: 35, ease: 'linear' }}
+        style={{
+          position: 'absolute',
+          inset: -size * 0.2,
+          borderRadius: '50%',
+          border: '1px dashed rgba(255, 255, 255, 0.15)',
+          borderLeftColor: 'transparent',
+          borderRightColor: 'transparent',
+          pointerEvents: 'none',
+          boxShadow: `inset 0 0 10px rgba(255, 255, 255, 0.02)`,
         }}
       />
 
       {/* Core orb */}
       <motion.div
-        animate={{ scale: isStreaming ? [1, 1.04, 1] : 1 }}
+        animate={{ scale: isStreaming ? [1, 1.05, 1] : 1 }}
         transition={{ duration: 1.5, repeat: isStreaming ? Infinity : 0 }}
         style={{
           width: '100%', height: '100%', borderRadius: '50%',
-          background: `
-            radial-gradient(circle at 35% 30%, ${colors.primary}CC 0%, transparent 55%),
-            radial-gradient(circle at 65% 70%, ${colors.secondary}AA 0%, transparent 50%),
-            radial-gradient(circle at 50% 50%, ${colors.secondary}88 30%, transparent 80%)
-          `,
+          backgroundImage: `url(${colors.image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           boxShadow: `
-            0 0 ${size * 0.3}px ${size * 0.1}px ${colors.glow},
-            0 0 ${size * 0.6}px ${size * 0.2}px ${colors.primary}22,
-            inset 0 0 ${size * 0.15}px rgba(255,255,255,0.08)
+            0 0 ${size * 0.2}px ${size * 0.05}px ${colors.glow},
+            0 0 ${size * 0.4}px ${size * 0.1}px ${colors.primary}22,
+            inset 0 0 15px rgba(255,255,255,0.1)
           `,
-          filter: 'blur(0.5px)',
           position: 'relative', overflow: 'hidden',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}
       >
-        {/* Inner shimmer */}
+        {/* Inner shimmering glass overlay */}
         <div style={{
           position: 'absolute', inset: 0, borderRadius: '50%',
-          background: `radial-gradient(circle at 25% 25%, rgba(255,255,255,0.12) 0%, transparent 40%)`,
+          background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 60%)`,
+          pointerEvents: 'none',
         }} />
       </motion.div>
 

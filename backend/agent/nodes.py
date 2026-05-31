@@ -94,6 +94,7 @@ def _extract_natal_chart_from_tool_messages(messages: list) -> dict | None:
 
 def precheck_node(state: AstroAgentState) -> dict:
     """Safety check — runs before any LLM call."""
+    print("[NODE START] precheck_node")
     updates: dict = {
         "_latency_start": time.time(),
         "step_count": 0,
@@ -102,6 +103,7 @@ def precheck_node(state: AstroAgentState) -> dict:
 
     messages = state.get("messages", [])
     if not messages:
+        print(f"[NODE END] precheck_node - empty messages, updates: {updates}")
         return updates
 
     last_user_msg = ""
@@ -118,12 +120,15 @@ def precheck_node(state: AstroAgentState) -> dict:
     else:
         updates["intent"] = "free_form"  # Default; will be overwritten by intent_router
 
+    print(f"[NODE END] precheck_node - updates: {updates}")
     return updates
 
 
 def intent_router_node(state: AstroAgentState) -> dict:
     """Classify user intent with a lightweight Claude Haiku call."""
+    print("[NODE START] intent_router_node")
     if state.get("intent") == "safety_block":
+        print("[NODE END] intent_router_node - skipped due to safety_block")
         return {}
 
     messages = state.get("messages", [])
@@ -168,7 +173,8 @@ Output ONLY valid JSON: {"intent": "<label>", "confidence": 0.0}"""
             raw = match.group(0)
         parsed = json.loads(raw)
         intent = parsed.get("intent", "free_form")
-    except Exception:
+    except Exception as e:
+        print(f"[NODE ERROR] intent_router_node exception: {e}")
         intent = "free_form"
 
     valid_intents = {
@@ -179,6 +185,7 @@ Output ONLY valid JSON: {"intent": "<label>", "confidence": 0.0}"""
     if intent not in valid_intents:
         intent = "free_form"
 
+    print(f"[NODE END] intent_router_node - intent classified: {intent}")
     return {"intent": intent}
 
 
@@ -204,6 +211,7 @@ def _prune_messages(messages: list) -> list:
 def reasoning_node(state: AstroAgentState) -> dict:
     """Main ReAct reasoning loop using Claude Haiku with all 9 tools bound."""
     step_count = state.get("step_count", 0) + 1
+    print(f"[NODE START] reasoning_node - Step {step_count}")
     birth_details = state.get("birth_details")
     natal_chart = state.get("natal_chart")
 
@@ -269,10 +277,13 @@ Current step: {step_count}/{state.get('max_steps', 8)}"""
     model_with_tools = _get_llm(tools=ALL_TOOLS)
 
     pruned_messages = _prune_messages(state.get("messages", []))
-    response = model_with_tools.invoke(
-        [SystemMessage(content=system_prompt)] + pruned_messages
-    )
-
+    try:
+        response = model_with_tools.invoke(
+            [SystemMessage(content=system_prompt)] + pruned_messages
+        )
+    except Exception as e:
+        print(f"[NODE ERROR] reasoning_node LLM invocation failed: {e}")
+        raise e
 
     updates: dict = {
         "messages": [response],
@@ -283,16 +294,20 @@ Current step: {step_count}/{state.get('max_steps', 8)}"""
     if natal_chart and state.get("natal_chart") is None:
         updates["natal_chart"] = natal_chart
 
+    print(f"[NODE END] reasoning_node - Step {step_count} completed. Tool calls: {getattr(response, 'tool_calls', [])}")
     return updates
 
 
 def response_formatter_node(state: AstroAgentState) -> dict:
+    print("[NODE START] response_formatter_node")
     messages = state.get("messages", [])
     if not messages:
+        print("[NODE END] response_formatter_node - empty messages")
         return {}
 
     last_msg = messages[-1]
     if not isinstance(last_msg, AIMessage):
+        print(f"[NODE END] response_formatter_node - last message is not AIMessage: {type(last_msg)}")
         return {}
 
     content = last_msg.content
@@ -320,15 +335,18 @@ def response_formatter_node(state: AstroAgentState) -> dict:
         content += disclaimer
 
     updated_msg = AIMessage(content=content)
+    print("[NODE END] response_formatter_node")
     return {"messages": list(messages[:-1]) + [updated_msg]}
 
 
 def format_error_node(state: AstroAgentState) -> dict:
     """Return a safe, warm deflection for safety_block intents."""
+    print("[NODE START] format_error_node")
     msg = AIMessage(
         content="I'm here as your celestial guide — let's keep our focus on the stars. "
                 "Is there something about your birth chart or the cosmic energies I can help you explore?"
     )
+    print("[NODE END] format_error_node")
     return {"messages": [msg]}
 
 
@@ -336,24 +354,28 @@ def format_error_node(state: AstroAgentState) -> dict:
 
 def route_after_precheck(state: AstroAgentState) -> str:
     if state.get("intent") == "safety_block":
-        return "format_error"
-    return "intent_router"
+        dest = "format_error"
+    else:
+        dest = "intent_router"
+    print(f"[EDGE ROUTER] route_after_precheck -> {dest}")
+    return dest
 
 
 def route_after_reasoning(state: AstroAgentState) -> str:
     messages = state.get("messages", [])
     if not messages:
-        return "response_formatter"
+        dest = "response_formatter"
+    else:
+        last_message = messages[-1]
 
-    last_message = messages[-1]
+        # Force exit if step budget exceeded
+        if state.get("step_count", 0) >= state.get("max_steps", 8):
+            dest = "response_formatter"
+        # Continue tool loop if last message has tool calls
+        elif isinstance(last_message, AIMessage) and last_message.tool_calls:
+            dest = "tool_node"
+        else:
+            dest = "response_formatter"
 
-    # Force exit if step budget exceeded
-    if state.get("step_count", 0) >= state.get("max_steps", 8):
-        return "response_formatter"
-
-    # Continue tool loop if last message has tool calls
-    if isinstance(last_message, AIMessage):
-        if last_message.tool_calls:
-            return "tool_node"
-
-    return "response_formatter"
+    print(f"[EDGE ROUTER] route_after_reasoning -> {dest}")
+    return dest

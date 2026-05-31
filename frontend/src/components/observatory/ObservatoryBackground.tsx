@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+import celestialBg from '../../assets/celestial_bg.png'
 
 interface Star { id: number; x: number; y: number; r: number; opacity: number; delay: number }
+
 
 function StarField() {
   const stars = useMemo<Star[]>(() =>
@@ -69,7 +71,8 @@ export function ObservatoryBackground() {
     <div
       style={{
         position: 'fixed', inset: 0,
-        background: 'var(--color-deep-space)',
+        background: `radial-gradient(circle at 50% 50%, rgba(13, 13, 43, 0.4) 0%, var(--color-void) 100%), url(${celestialBg}) no-repeat center center`,
+        backgroundSize: 'cover',
         zIndex: 0, overflow: 'hidden',
       }}
     >

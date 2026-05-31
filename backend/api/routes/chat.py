@@ -94,11 +94,14 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
         final_step_count = 0
 
         try:
+            print("[CHAT STREAM] Starting GRAPH.astream_events invocation...")
             async for event in GRAPH.astream_events(
                 input=initial_state,
                 version="v2",
             ):
                 kind = event.get("event", "")
+                name = event.get("name", "")
+                print(f"[STREAM EVENT] kind: {kind}, name: {name}")
 
                 # ── Token streaming ────────────────────────────────────────────
                 if kind == "on_chat_model_stream":
@@ -109,6 +112,7 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                         text = chunk.content
                         if isinstance(text, str) and text:
                             all_tokens.append(text)
+                            print(f"[STREAM TOKEN] {repr(text)}")
                             yield {
                                 "event": "token",
                                 "data": json.dumps({"text": text}),
@@ -119,6 +123,7 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                                     t = part.get("text", "")
                                     if t:
                                         all_tokens.append(t)
+                                        print(f"[STREAM TOKEN list] {repr(t)}")
                                         yield {
                                             "event": "token",
                                             "data": json.dumps({"text": t}),
@@ -129,6 +134,7 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                     tool_name = event.get("name", "unknown_tool")
                     if tool_name not in tool_calls_made:
                         tool_calls_made.append(tool_name)
+                    print(f"[STREAM TOOL START] tool: {tool_name}")
                     yield {
                         "event": "tool_start",
                         "data": json.dumps({"tool": tool_name, "step": len(tool_calls_made)}),
@@ -138,6 +144,7 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                 elif kind == "on_tool_end":
                     tool_name = event.get("name", "")
                     tool_output = event["data"].get("output", "")
+                    print(f"[STREAM TOOL END] tool: {tool_name}")
 
                     # Auto-save natal chart when compute_birth_chart completes
                     if tool_name == "compute_birth_chart" and isinstance(tool_output, str):
@@ -158,6 +165,7 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                     output = event.get("data", {}).get("output", {})
                     final_intent = output.get("intent", "free_form")
                     final_step_count = output.get("step_count", 0)
+                    print(f"[STREAM LANGGRAPH END] final_intent={final_intent}, final_step_count={final_step_count}")
                     # Pick up natal chart from state if reasoning node cached it
                     if not new_natal_chart and output.get("natal_chart"):
                         new_natal_chart = output["natal_chart"]
@@ -168,6 +176,7 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
                         last_msg = final_messages[-1]
                         if hasattr(last_msg, "content") and isinstance(last_msg.content, str) and last_msg.content:
                             all_tokens.append(last_msg.content)
+                            print(f"[STREAM FINAL TOKEN] {repr(last_msg.content)}")
                             yield {
                                 "event": "token",
                                 "data": json.dumps({"text": last_msg.content}),
@@ -175,7 +184,7 @@ async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
 
         except Exception as e:
             import traceback
-            print("ERROR in chat_stream event generator:")
+            print(f"[STREAM EXCEPTION] ERROR in chat_stream event generator: {e}")
             traceback.print_exc()
             yield {"event": "error", "data": json.dumps({"message": str(e)})}
 
