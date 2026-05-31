@@ -59,6 +59,16 @@ def _build_initial_state(request: ChatRequest, session_data: dict) -> AstroAgent
     }
 
 
+@router.get("/chat/stream")
+async def chat_stream_get(
+    message: str,
+    session_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    request = ChatRequest(message=message, session_id=session_id)
+    return await chat_stream(request, db)
+
+
 @router.post("/chat/stream")
 async def chat_stream(request: ChatRequest, db: AsyncSession = Depends(get_db)):
     # Ensure session exists

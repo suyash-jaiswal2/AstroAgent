@@ -13,10 +13,10 @@ export function useSSE() {
       startAssistantMessage()
 
       try {
-        const response = await fetch(`${BASE}/api/chat/stream`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message, session_id: sessionId }),
+        const url = `${BASE}/api/chat/stream?message=${encodeURIComponent(message)}&session_id=${encodeURIComponent(sessionId)}`
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: { 'Accept': 'text/event-stream' },
         })
 
         if (!response.ok || !response.body) {
