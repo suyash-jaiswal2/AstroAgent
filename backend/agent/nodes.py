@@ -193,10 +193,20 @@ def _prune_messages(messages: list) -> list:
     """Prune large redundant payloads from past ToolMessages to save tokens."""
     pruned = []
     for msg in messages:
-        if isinstance(msg, ToolMessage) and msg.name == "compute_birth_chart":
+        if isinstance(msg, ToolMessage):
             content = msg.content if isinstance(msg.content, str) else ""
-            if len(content) > 300:
+            if msg.name == "compute_birth_chart" and len(content) > 300:
                 summary = f"{msg.name} executed successfully. Data has been formatted into the system prompt context."
+                pruned.append(ToolMessage(
+                    content=summary,
+                    name=msg.name,
+                    tool_call_id=msg.tool_call_id,
+                    status=getattr(msg, "status", "success")
+                ))
+                continue
+            elif len(content) > 1500:
+                # Truncate other massive tool payloads to prevent 413/TPM rate limits
+                summary = content[:1500] + "\n... [truncated to save tokens] ..."
                 pruned.append(ToolMessage(
                     content=summary,
                     name=msg.name,
