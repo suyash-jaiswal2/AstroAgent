@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useSessionStore } from '../../store/sessionStore'
+import { MarkdownText } from './MarkdownText'
 
 export function StreamingText() {
   const { streamingContent, isStreaming } = useSessionStore()
@@ -13,15 +14,8 @@ export function StreamingText() {
 
   return (
     <div ref={ref} style={{ marginBottom: '1rem' }}>
-      <div className="message-ai" style={{ whiteSpace: 'pre-wrap' }}>
-        {streamingContent}
-        {isStreaming && (
-          <span style={{
-            display: 'inline-block', width: 2, height: '1em', marginLeft: 2,
-            background: 'var(--gold)', animation: 'cursor-blink 1s ease-in-out infinite',
-            verticalAlign: 'text-bottom',
-          }} />
-        )}
+      <div className="message-ai">
+        <MarkdownText text={streamingContent} showCursor={isStreaming} />
       </div>
     </div>
   )

@@ -1,3 +1,4 @@
+import { MarkdownText } from './MarkdownText'
 import type { ChatMessage } from '../../store/sessionStore'
 
 interface Props { message: ChatMessage }
@@ -17,8 +18,8 @@ export function MessageBubble({ message }: Props) {
 
   return (
     <div style={{ marginBottom: '1.5rem' }}>
-      <div className="message-ai" style={{ whiteSpace: 'pre-wrap' }}>
-        {message.content}
+      <div className="message-ai">
+        <MarkdownText text={message.content} />
       </div>
       {message.toolCalls && message.toolCalls.length > 0 && (
         <details style={{ marginTop: '0.5rem' }}>

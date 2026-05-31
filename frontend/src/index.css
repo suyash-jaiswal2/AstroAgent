@@ -87,11 +87,16 @@ body {
 /* ── Scroll-style message bubbles ────────────────────────────────────────── */
 .message-ai {
   border-left: 3px solid var(--gold);
-  padding-left: 1rem;
+  background: rgba(8, 8, 20, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 0 16px 16px 0;
+  padding: 1rem 1.25rem;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   line-height: 1.8;
   color: var(--text-celestial);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .message-user {
